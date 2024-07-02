@@ -1,0 +1,23 @@
+name: R version check
+
+on:
+  push
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-20, ubuntu-22, ubuntu-24]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Check if R is installed
+      run: |
+        if command -v R &> /dev/null
+        then
+            R --version
+        else
+            echo "R is not installed"
+        fi
