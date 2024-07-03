@@ -1,0 +1,23 @@
+name: Check Ruby Installation
+
+on:
+  push
+
+jobs:
+  check-ruby:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019, windows-2022]
+        ruby_versions: ["3.0", "3.1", "3.2"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby ${{ matrix.ruby_versions }}
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_versions }}
+
+      - name: Check Ruby version
+        run: ruby --version
