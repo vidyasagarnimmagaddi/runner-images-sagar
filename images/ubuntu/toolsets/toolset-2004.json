@@ -159,6 +159,7 @@
             "locales",
             "mercurial",
             "openssh-client",
+            "openssh-server",
             "p7zip-rar",
             "pkg-config",
             "python-is-python3",

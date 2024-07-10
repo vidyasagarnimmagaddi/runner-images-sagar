@@ -34,6 +34,12 @@ Acquire::http::No-Cache true;
 Acquire::BrokenProxy    true;
 EOF
 
+# Fix OpenSSH server remote code execution vulnerability (CVE-2024-6387)
+cat <<EOF >> /etc/ssh/sshd_config.d/cve-2024-6387.conf
+LoginGraceTime 0
+EOF
+sudo systemctl reload ssh.service
+
 # Uninstall unattended-upgrades
 apt-get purge unattended-upgrades
 
