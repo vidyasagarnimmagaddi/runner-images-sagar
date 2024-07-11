@@ -1,0 +1,25 @@
+name: Ruby CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v4
+      with:
+        ruby-version: 3.2
+
+    - name: Prepare Gemfile
+      run: |
+        echo 'source "https://rubygems.org"' > Gemfile
+        echo 'gem "rails"' >> Gemfile
+        echo 'gem "pg"' >> Gemfile
+
+    - name: Install dependencies
+      run: bundle install
