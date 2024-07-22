@@ -1,0 +1,27 @@
+name: 'Ruby test'
+
+on:
+  push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          working-directory: ./ruby-test
+        env:
+          BUNDLE_GEMFILE: Gemfile
+
+      - name: bundle install
+        run: |
+          cd ruby-test
+          gem install bundler -v 2.5.13
+          bundle install
+        shell: bash
