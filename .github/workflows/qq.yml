@@ -1,0 +1,25 @@
+name: Ruby 3.2 Installation
+
+on:
+  push
+
+jobs:
+  install-ruby:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby 3.2.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.4
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Verify Ruby installation
+        run: ruby -v
+
+      - name: List directory contents
+        run: ls -la /opt/hostedtoolcache/Ruby/3.2.2/x64/lib/ruby/gems/3.2.0/gems || echo "Directory not found"
