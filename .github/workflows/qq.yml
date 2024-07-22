@@ -22,4 +22,4 @@ jobs:
         run: ruby -v
 
       - name: List directory contents
-        run: ls -la /opt/hostedtoolcache/Ruby/3.2.2/x64/lib/ruby/gems/3.2.0/gems || echo "Directory not found"
+        run: ls -la /opt/hostedtoolcache/Ruby/3.1.6/x64/lib/ruby/gems/3.1.0/gems || echo "Directory not found"
