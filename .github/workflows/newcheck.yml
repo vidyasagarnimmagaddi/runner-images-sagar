@@ -1,0 +1,26 @@
+name: Ruby Versions Test
+
+on:
+  push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby-version: [3.1.0, 3.2.0]
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: List directory contents
+        run: ls -la /opt/hostedtoolcache/Ruby/${{ matrix.ruby-version }}/x64/lib/ruby/gems/${{ matrix.ruby-version }}/gems
