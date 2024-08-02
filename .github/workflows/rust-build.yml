@@ -1,0 +1,30 @@
+name: Rust Build
+
+on:
+  push
+
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Install OpenVINO
+      run: |
+        choco install openvino --version=2022.1
+        setx OPENVINO_DIR "C:\Program Files (x86)\Intel\openvino_2022.1.0.643\"
+        setx PATH "%PATH%;%OPENVINO_DIR%\bin"
+
+    - name: Build
+      run: cargo build --verbose
+
+    - name: Test
+      run: cargo test --verbose
