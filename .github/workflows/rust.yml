@@ -1,0 +1,36 @@
+name: Build Rust Project
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: 1.72 # Adjust to your desired Rust version
+
+      - name: Print Rust version
+        run: rustc --version
+
+      - name: Install Scoop and dependencies
+        shell: pwsh
+        run: |
+          # Install Scoop
+          iwr -useb get.scoop.sh | iex
+
+          # Install Perl and other dependencies
+          scoop install perl
+          scoop install openssl
+
+          # Install missing Perl modules
+          scoop install cpanminus
+          cpanm Locale::Maketext::Simple
+
+      - name: Build project
+        run: cargo build --release
