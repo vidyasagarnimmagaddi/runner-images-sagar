@@ -25,8 +25,8 @@ jobs:
 
     - name: Build
       run: cargo build --verbose
-      working-directory: rust
+      working-directory: ./rust
 
     - name: Test
       run: cargo test --verbose
-      working-directory: rust
+      working-directory: ./rust
