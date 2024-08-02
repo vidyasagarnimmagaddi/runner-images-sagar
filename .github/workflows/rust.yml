@@ -1,6 +1,6 @@
 name: Build Rust Project
 
-on: [push]
+on: push
 
 jobs:
   build:
@@ -8,10 +8,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Rust
-        uses: actions/setup-rust@v1
+        uses: rust-lang/setup-rust@v1
         with:
           rust-version: 1.72 # Adjust to your desired Rust version
 
@@ -23,7 +23,7 @@ jobs:
         run: |
           # Install Scoop
           iwr -useb get.scoop.sh | iex
-
+          
           # Install Perl and other dependencies
           scoop install perl
           scoop install openssl
