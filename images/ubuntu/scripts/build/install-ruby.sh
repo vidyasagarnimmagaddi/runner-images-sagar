@@ -8,6 +8,15 @@
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 
+# Check and fix permissions for the Ruby gems folder
+fix_permissions() {
+    local path="$1"
+    if [[ -d $path ]]; then
+        echo "Fixing permissions for $path"
+        chmod o-w "$path"
+    fi
+}   
+
 apt-get install ruby-full
 
 # temporary fix for fastlane installation https://github.com/sporkmonger/addressable/issues/541
@@ -57,6 +66,20 @@ for toolset_version in ${toolset_versions[@]}; do
     if [[ ! -f $complete_file_path ]]; then
         echo "Create complete file"
         touch $complete_file_path
+    fi
+    # Fix permissions for the gems folder
+    gems_folder_path="$ruby_version_path/x64/lib/ruby/gems/${toolset_version%%.*}.0/gems"
+    fix_permissions "$gems_folder_path"
+done
+
+# Check installed Ruby versions
+for toolset_version in ${toolset_versions[@]}; do
+    ruby_version_path="$ruby_path/$toolset_version/x64/lib/ruby/gems/${toolset_version%%.*}.0/gems"
+    if [[ -d $ruby_version_path ]]; then
+        echo "Ruby version $toolset_version is installed correctly at $ruby_version_path"
+    else
+        echo "Ruby version $toolset_version installation failed."
+        exit 1
     fi
 done
 
