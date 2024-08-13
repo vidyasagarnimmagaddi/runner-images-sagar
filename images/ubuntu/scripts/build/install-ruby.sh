@@ -58,6 +58,8 @@ for toolset_version in ${toolset_versions[@]}; do
         echo "Create complete file"
         touch $complete_file_path
     fi
+    echo "Adjusting permissions for $ruby_version_path"
+    chmod -R o-w $ruby_version_path
 done
 
 invoke_tests "Tools" "Ruby"
