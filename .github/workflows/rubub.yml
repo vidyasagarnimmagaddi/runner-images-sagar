@@ -15,7 +15,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
-          working-directory: ./ruby
         env:
           BUNDLE_GEMFILE: Gemfile
 
@@ -24,7 +23,7 @@ jobs:
 
       - name: bundle install
         run: |
-          cd ruby-test
+          cd ruby
           gem install bundler -v 2.5.13
           bundle install
         shell: bash
