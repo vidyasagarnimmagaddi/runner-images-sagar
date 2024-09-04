@@ -23,7 +23,6 @@ jobs:
 
       - name: bundle install
         run: |
-          cd ruby
           gem install bundler -v 2.5.13
           bundle install
         shell: bash
