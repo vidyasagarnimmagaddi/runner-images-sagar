@@ -48,9 +48,7 @@ if (Test-IsUbuntu20) {
 $languageAndRuntime.AddToolVersionsListInline("GNU C++", $(Get-CPPVersions), "^\d+")
 $languageAndRuntime.AddToolVersionsListInline("GNU Fortran", $(Get-FortranVersions), "^\d+")
 $languageAndRuntime.AddToolVersion("Julia", $(Get-JuliaVersion))
-if ((Test-IsUbuntu20) -or (Test-IsUbuntu22)) {
-    $languageAndRuntime.AddToolVersion("Kotlin", $(Get-KotlinVersion))
-}
+$languageAndRuntime.AddToolVersion("Kotlin", $(Get-KotlinVersion))
 if (-not $(Test-IsUbuntu24)) {
     $languageAndRuntime.AddToolVersion("Mono", $(Get-MonoVersion))
     $languageAndRuntime.AddToolVersion("MSBuild", $(Get-MsbuildVersion))
@@ -142,9 +140,7 @@ if ((Test-IsUbuntu20) -or (Test-IsUbuntu22)) {
     $tools.AddToolVersion("nvm", $(Get-NvmVersion))
 }
 $tools.AddToolVersion("OpenSSL", $(Get-OpensslVersion))
-if ((Test-IsUbuntu20) -or (Test-IsUbuntu22)) {
-    $tools.AddToolVersion("Packer", $(Get-PackerVersion))
-}
+$tools.AddToolVersion("Packer", $(Get-PackerVersion))
 $tools.AddToolVersion("Parcel", $(Get-ParcelVersion))
 if (Test-IsUbuntu20) {
     $tools.AddToolVersion("PhantomJS", $(Get-PhantomJSVersion))
