@@ -17,10 +17,7 @@ jobs:
           ruby-version: 3.2
         env:
           BUNDLE_GEMFILE: Gemfile
-
-      - name: Change permissions
-        run: chmod -R o-w /opt/hostedtoolcache/Ruby/3.2.5/x64/lib/ruby/gems/3.2.0/gems
-
+          
       - name: bundle install
         run: |
           gem install bundler -v 2.5.13
