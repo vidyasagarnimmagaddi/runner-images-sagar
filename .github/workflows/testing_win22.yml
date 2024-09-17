@@ -1,7 +1,7 @@
 name: Get File Thumbprint
 
 on:
-  workflow_dispatch:
+  push
 
 jobs:
   thumbprint:
@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Download Visual Studio Installer
       run: Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_Enterprise.exe -OutFile vs_Enterprise.exe
