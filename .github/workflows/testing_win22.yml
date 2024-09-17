@@ -1,7 +1,7 @@
 name: Get File Thumbprint
 
 on:
-  push
+  workflow_dispatch:
 
 jobs:
   thumbprint:
@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Download Visual Studio Installer
       run: Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_Enterprise.exe -OutFile vs_Enterprise.exe
@@ -21,6 +21,9 @@ jobs:
         $sig = Get-AuthenticodeSignature -FilePath $filePath
         Write-Output "Signature Thumbprint: $($sig.SignerCertificate.Thumbprint)"
       shell: pwsh
+      continue-on-error: true
 
     - name: Output Thumbprint
-      run: echo "Signature Thumbprint: ${{ steps.get_thumbprint.outputs.signature_thumbprint }}"
+      run: |
+        $thumbprint = $(Get-Content $env:GITHUB_WORKSPACE/get_thumbprint.txt)
+        Write-Output "Signature Thumbprint: $thumbprint"
