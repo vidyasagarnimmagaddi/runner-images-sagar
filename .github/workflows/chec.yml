@@ -2,7 +2,9 @@ name: Check Ruby Version
 
 on:
   push:
-   
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   check-ruby-version:
@@ -10,11 +12,12 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Fetch Ruby version from Ubuntu Packages
         run: |
-          RUBY_VERSION=$(curl -s https://packages.ubuntu.com/24/ruby | grep -oP 'Ruby \K[0-9.]+')
+          RUBY_PAGE=$(curl -s https://packages.ubuntu.com/24/ruby)
+          RUBY_VERSION=$(echo "$RUBY_PAGE" | grep -oP 'Version: \K[0-9.]+')
           echo "Ruby version available in Ubuntu 24: $RUBY_VERSION"
 
       - name: Display Ruby version
