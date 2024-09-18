@@ -1,0 +1,22 @@
+name: Check Ruby Version
+
+on:
+  push:
+   
+
+jobs:
+  check-ruby-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Ruby version from Ubuntu Packages
+        run: |
+          RUBY_VERSION=$(curl -s https://packages.ubuntu.com/24/ruby | grep -oP 'Ruby \K[0-9.]+')
+          echo "Ruby version available in Ubuntu 24: $RUBY_VERSION"
+
+      - name: Display Ruby version
+        run: |
+          echo "The available Ruby version is: $RUBY_VERSION"
