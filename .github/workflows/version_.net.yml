@@ -1,9 +1,7 @@
 name: Download .NET SDK 8.0
 
 on:
-  push:
-    branches:
-      - main
+  push
 
 jobs:
   download-dotnet-sdk:
