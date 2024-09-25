@@ -21,15 +21,9 @@ jobs:
       - name: Test different Bundler versions
         run: |
           for version in 2.5.20 2.5.19 2.5.18 2.5.17 2.5.16; do
-            echo "=== Installing Bundler $version ===" | tee -a bundler_output.log
-            gem install bundler -v $version | tee -a bundler_output.log
-            echo "=== Running bundle install with Bundler $version ===" | tee -a bundler_output.log
-            bundle install | tee -a bundler_output.log
+            echo "Installing Bundler $version"
+            gem install bundler -v $version
+            echo "Running bundle install with Bundler $version"
+            bundle install
           done
         shell: bash
-
-      - name: Upload Bundler Output
-        uses: actions/upload-artifact@v3
-        with:
-          name: bundler-output
-          path: bundler_output.log
