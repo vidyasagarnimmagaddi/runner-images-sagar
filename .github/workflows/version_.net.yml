@@ -1,0 +1,19 @@
+name: List .NET Versions
+
+on:
+  push
+
+jobs:
+  fetch-dotnet-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Update package lists
+        run: sudo apt update
+      
+      - name: List available .NET SDK versions
+        run: |
+          apt list -a dotnet-sdk
+          apt-cache policy dotnet-sdk
