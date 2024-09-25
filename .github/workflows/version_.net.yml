@@ -1,70 +1,43 @@
-name: Fetch .NET SDK Version
+name: Download .NET SDK 8.0
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
-  identify_sdk_version:
-    runs-on: ubuntu-24.04
+  download-dotnet-sdk:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Set up .NET SDK
+      - name: Set up .NET SDK versions
+        id: setup
         run: |
-          echo "Setting up version variable"
-          version="8.0"
-          
-          # Function to download with retry
-          download_with_retry() {
-              local url=$1
-              local attempts=5
-              local count=0
-              while [[ $count -lt $attempts ]]; do
-                  response=$(curl -s --fail "$url")
-                  if [[ $? -eq 0 ]]; then
-                      echo "$response"
-                      return
-                  fi
-                  count=$((count + 1))
-                  echo "Retrying... ($count/$attempts)"
-                  sleep 2
-              done
-              echo "Failed to download after $attempts attempts."
-              exit 1
-          }
-
-          # Define the release URL
-          release_url="https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/$version/releases.json"
-          
-          # Download the releases metadata
-          releases=$(download_with_retry "$release_url")
-          
-          # Initialize an empty array to store SDK versions
+          dotnet_versions=("8.0") # Adjust if you need multiple versions
           sdks=()
+
+          for version in "${dotnet_versions[@]}"; do
+              release_url="https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/${version}/releases.json"
+              releases=$(curl -s "$release_url")
+              if [[ $version == "6.0" ]]; then
+                  sdks=("${sdks[@]}" $(echo "${releases}" | jq -r 'first(.releases[].sdks[]?.version | select(contains("preview") or contains("rc") | not))'))
+              else
+                  sdks=("${sdks[@]}" $(echo "${releases}" | jq -r '.releases[].sdk.version | select(contains("preview") or contains("rc") | not)'))
+                  sdks=("${sdks[@]}" $(echo "${releases}" | jq -r '.releases[].sdks[]?.version | select(contains("preview") or contains("rc") | not)'))
+              fi
+          done
+
+          sorted_sdks=$(echo "${sdks[@]}" | tr ' ' '\n' | sort -r | uniq -w 5)
+          echo "Sorted SDKs: $sorted_sdks"
           
-          # Determine which SDK versions to fetch
-          if [[ $version == "8.0" ]]; then
-              sdk_version=$(echo "${releases}" | jq -r 'first(.releases[].sdks[]?.version | select(contains("preview") or contains("rc") | not))')
-          else
-              sdk_version=$(echo "${releases}" | jq -r '.releases[].sdk.version | select(contains("preview") or contains("rc") | not)')
-          fi
-          
-          # Append the SDK version to the array
-          sdks+=("$sdk_version")
-          
-          # Output the SDK version fetched
-          if [[ -z "$sdk_version" ]]; then
-              echo "No stable SDK version found for .NET $version."
-              exit 1
-          else
-              echo "Fetched stable SDK version: $sdk_version"
-          fi
-          
-          # Log all available SDK versions
-          echo "Available SDK versions:"
-          echo "${releases}" | jq -r '.releases[].sdks[].version'
-          
-          # Set the fetched SDK version as an output
-          echo "sdk_version=$sdk_version" >> $GITHUB_ENV
+          # Output latest SDK version
+          latest_sdk=$(echo "$sorted_sdks" | head -n 1)
+          echo "Latest .NET SDK version: $latest_sdk"
+          echo "::set-output name=latest_sdk::$latest_sdk"
+
+      - name: Print Latest SDK Version
+        run: |
+          echo "The latest .NET SDK version is: ${{ steps.setup.outputs.latest_sdk }}"
