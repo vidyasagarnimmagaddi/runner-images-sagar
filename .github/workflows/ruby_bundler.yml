@@ -20,6 +20,6 @@ jobs:
           
       - name: bundle install
         run: |
-          gem install bundler -v 2.5.13
+          gem install bundler -v 2.5.19
           bundle install
         shell: bash
