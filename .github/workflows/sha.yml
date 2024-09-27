@@ -1,0 +1,20 @@
+name: Fetch SHA256 on Windows
+
+on:
+  push
+
+jobs:
+  fetch-sha256:
+    runs-on: windows-2019
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download toolchain file
+      run: |
+        Invoke-WebRequest -Uri "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download" -OutFile "toolchain.7z"
+
+    - name: Compute SHA256 hash
+      run: |
+        Get-FileHash "toolchain.7z" -Algorithm SHA256 | Format-List
