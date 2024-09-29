@@ -15,6 +15,13 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download" -OutFile "toolchain.7z"
 
+    - name: Verify downloaded file
+      run: |
+        if (-Not (Test-Path "toolchain.7z")) {
+            Write-Error "File not found!"
+            exit 1
+        }
+
     - name: Extract toolchain
       run: |
         & "C:\Program Files\7-Zip\7z.exe" x toolchain.7z -o"$PWD"
@@ -22,4 +29,9 @@ jobs:
     - name: Compute SHA256 hash
       run: |
         $filePath = "bin\mingw32-make.exe"
-        Get-FileHash $filePath -Algorithm SHA256 | Format-List
+        if (Test-Path $filePath) {
+            Get-FileHash $filePath -Algorithm SHA256 | Format-List
+        } else {
+            Write-Error "$filePath not found!"
+            exit 1
+        }
