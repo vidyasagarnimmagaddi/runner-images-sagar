@@ -10,7 +10,7 @@ if (Test-IsWin19) {
     $("mingw32", "mingw64") | ForEach-Object {
         if ($_ -eq "mingw32") {
             $url = "$baseUrl/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download"
-            $sha256sum = 'adb84b70094c0225dd30187ff995e311d19424b1eb8f60934c60e4903297f946'
+            $sha256sum = '3d5e1ad2b004049655212d6599631267ac3f424a5bc75cbab29ba0467458d822'
         } elseif ($_ -eq "mingw64") {
             $url = "$baseUrl/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/seh/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z/download"
             $sha256sum = '853970527b5de4a55ec8ca4d3fd732c00ae1c69974cc930c82604396d43e79f8'
