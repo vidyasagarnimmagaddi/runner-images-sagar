@@ -1,40 +1,44 @@
-name: Build Workflow
+name: Download and Verify MinGW-w64
 
 on: [push]
 
 jobs:
   build:
-    runs-on: windows-latest
-    
+    runs-on: windows-2019
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Install 7-Zip
-        run: |
-          Set-ExecutionPolicy Bypass -Scope Process -Force;
-          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
-          iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'));
-          choco install 7zip -y
+    - name: Install 7-Zip
+      run: |
+        $url = "https://www.7-zip.org/a/7z1900-x64.exe"
+        $output = "$env:TEMP\7z.exe"
+        Invoke-WebRequest -Uri $url -OutFile $output
+        Start-Process -FilePath $output -ArgumentList "/S" -Wait
 
-      - name: Download MinGW
-        run: |
-          $url = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download"
-          $output = "mingw.7z"
-          $client = New-Object System.Net.WebClient
-          $client.DownloadFile($url, $output)
+    - name: Download MinGW-w64
+      run: |
+        $downloadUrl = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download"
+        $downloadPath = "$env:TEMP\mingw-w64.7z"
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
 
-      - name: Validate Download
-        run: |
-          if (-Not (Test-Path "mingw.7z")) {
-            Write-Error "Download failed or file not found!"
+    - name: Extract MinGW-w64
+      run: |
+        & "$env:ProgramFiles\7-Zip\7z.exe" x "$env:TEMP\mingw-w64.7z" -o"$env:TEMP\mingw-w64"
+
+    - name: Calculate SHA256 for mingw32-make.exe
+      run: |
+        $mingwMakePath = "$env:TEMP\mingw-w64\bin\mingw32-make.exe"
+        if (Test-Path $mingwMakePath) {
+            $sha256 = Get-FileHash -Path $mingwMakePath -Algorithm SHA256
+            Write-Host "SHA256 for mingw32-make.exe: $($sha256.Hash)"
+        } else {
+            Write-Error "Error: mingw32-make.exe not found!"
             exit 1
-          }
+        }
 
-      - name: Extract 7z File
-        run: |
-          & 'C:\Program Files\7-Zip\7z.exe' x mingw.7z -o'output_directory'
-
-      - name: Calculate SHA-256 Checksum
-        run: |
-          Get-FileHash -Path 'output_directory\bin\mingw32-make.exe' -Algorithm SHA256 | Format-List
+    - name: Cleanup
+      run: |
+        Remove-Item "$env:TEMP\7z.exe" -Force
+        Remove-Item "$env:TEMP\mingw-w64.7z" -Force
