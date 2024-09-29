@@ -8,7 +8,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
     - name: Install 7-Zip
       run: |
@@ -22,6 +22,12 @@ jobs:
         $downloadUrl = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download"
         $downloadPath = "$env:TEMP\mingw-w64.7z"
         Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
+
+        # Check if the downloaded file is not empty
+        if ((Get-Item $downloadPath).Length -eq 0) {
+            Write-Error "Download failed, the file is empty."
+            exit 1
+        }
 
     - name: Extract MinGW-w64
       run: |
