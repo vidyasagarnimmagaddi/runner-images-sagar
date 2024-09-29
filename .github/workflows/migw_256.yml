@@ -1,9 +1,7 @@
 name: Download and Verify MinGW
 
 on:
-  push:
-    branches:
-      - main
+  push
 
 jobs:
   build:
