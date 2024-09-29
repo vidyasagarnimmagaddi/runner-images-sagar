@@ -1,7 +1,9 @@
 name: Download and Verify MinGW
 
 on:
-  push
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -9,11 +11,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Download MinGW
         run: |
           Invoke-WebRequest -Uri "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download" -OutFile "mingw.7z"
+          # Rename the downloaded file to match the expected name
+          Rename-Item -Path "mingw.7z" -NewName "i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z"
 
       - name: Install 7z
         run: |
@@ -21,7 +25,7 @@ jobs:
 
       - name: Extract MinGW
         run: |
-          & "C:\Program Files\7-Zip\7z.exe" x "mingw.7z" -o"mingw"
+          & "C:\Program Files\7-Zip\7z.exe" x "i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z" -o"mingw"
 
       - name: Compute SHA256
         run: |
