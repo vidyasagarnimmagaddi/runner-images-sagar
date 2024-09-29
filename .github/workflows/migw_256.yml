@@ -8,7 +8,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Install 7-Zip
         run: |
@@ -19,7 +19,17 @@ jobs:
 
       - name: Download MinGW
         run: |
-          Invoke-WebRequest -Uri "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download" -OutFile "mingw.7z"
+          $url = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download"
+          $output = "mingw.7z"
+          $client = New-Object System.Net.WebClient
+          $client.DownloadFile($url, $output)
+
+      - name: Validate Download
+        run: |
+          if (-Not (Test-Path "mingw.7z")) {
+            Write-Error "Download failed or file not found!"
+            exit 1
+          }
 
       - name: Extract 7z File
         run: |
