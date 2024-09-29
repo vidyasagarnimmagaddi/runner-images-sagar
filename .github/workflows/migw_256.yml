@@ -1,34 +1,34 @@
-name: Fetch SHA256 on Windows
+name: Download and Verify MinGW
 
 on:
   push
 
 jobs:
-  fetch-sha256:
+  build:
     runs-on: windows-2019
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Install Chocolatey
-      run: |
-        Set-ExecutionPolicy Bypass -Scope Process -Force; 
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; 
-        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      - name: Download MinGW
+        run: |
+          Invoke-WebRequest -Uri "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download" -OutFile "mingw.7z"
 
-    - name: Install 7-Zip
-      run: choco install 7zip -y
+      - name: Install 7z
+        run: |
+          choco install 7zip
 
-    - name: Download toolchain file
-      run: |
-        Invoke-WebRequest -Uri "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download" -OutFile "toolchain.7z"
+      - name: Extract MinGW
+        run: |
+          & "C:\Program Files\7-Zip\7z.exe" x "mingw.7z" -o"mingw"
 
-    - name: Extract toolchain
-      run: |
-        & "C:\Program Files\7-Zip\7z.exe" x toolchain.7z -o"$PWD"
+      - name: Compute SHA256
+        run: |
+          $filePath = "mingw\i686-8.1.0-release-posix-dwarf-rt_v6-rev0\bin\mingw32-make.exe"
+          $hash = Get-FileHash -Path $filePath -Algorithm SHA256
+          $hash.Hash.ToLower() | Out-File -FilePath hash.txt -Encoding utf8
 
-    - name: Compute SHA256 hash
-      run: |
-        $filePath = "bin\mingw32-make.exe"
-        Get-FileHash $filePath -Algorithm SHA256 | Format-List
+      - name: Display SHA256
+        run: |
+          Get-Content hash.txt
