@@ -1,4 +1,4 @@
-name: Install and Check PhantomJS Version
+name: Install and Check PhantomJS Versionss
 
 on: [push]
 
