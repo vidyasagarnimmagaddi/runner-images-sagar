@@ -25,7 +25,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install npm packages
-        run: npm install graceful-fs@4.2.6 is-my-json-valid@2.20.5 phantomjs-prebuilt@2.1.14
+        run: npm install graceful-fs@4.2.6 is-my-json-valid@2.20.5 phantomjs-prebuilt@2.1.14 sass
 
       - name: Check PhantomJS version
         run: |
