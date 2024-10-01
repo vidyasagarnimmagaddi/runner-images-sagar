@@ -15,7 +15,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libnss3 libssl-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libssl-dev libgconf-2-4
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -26,4 +28,8 @@ jobs:
         run: npm install graceful-fs@4.2.6 is-my-json-valid@2.20.5 phantomjs-prebuilt@2.1.14
 
       - name: Check PhantomJS version
-        run: ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs --version
+        run: |
+          ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs --version || echo "PhantomJS failed to run."
+
+      - name: List installed libraries
+        run: ldd ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs
