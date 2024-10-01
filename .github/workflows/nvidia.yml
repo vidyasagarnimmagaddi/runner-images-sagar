@@ -1,0 +1,37 @@
+name: Install NVIDIA Driver
+
+on:
+  push
+
+jobs:
+  install-nvidia-driver:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update package list and install prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential dkms linux-headers-$(uname -r)
+
+      - name: Add NVIDIA PPA
+        run: |
+          sudo add-apt-repository ppa:graphics-drivers/ppa -y
+          sudo apt-get update
+
+      - name: Get the latest NVIDIA driver version
+        id: get_version
+        run: |
+          LATEST_DRIVER=$(apt-cache search nvidia-driver | grep -Eo 'nvidia-driver-[0-9]+' | sort -V | tail -n 1 | cut -d '-' -f 2)
+          echo "LATEST_DRIVER=${LATEST_DRIVER}" >> $GITHUB_ENV
+
+      - name: Install NVIDIA driver
+        run: |
+          sudo apt-get install -y nvidia-driver-${{ env.LATEST_DRIVER }}
+
+      - name: Reboot system (optional)
+        run: |
+          sudo reboot
+        if: ${{ github.event_name == 'workflow_dispatch' }}  # Only reboot if triggered manually
