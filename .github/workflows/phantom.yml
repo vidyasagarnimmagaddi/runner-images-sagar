@@ -1,0 +1,26 @@
+name: Install and Check PhantomJS Version
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [14, 16, 18, 20]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install npm packages
+        run: npm install graceful-fs@4.2.6 is-my-json-valid@2.20.5 phantomjs-prebuilt@2.1.14
+
+      - name: Check PhantomJS version
+        run: ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs --version
