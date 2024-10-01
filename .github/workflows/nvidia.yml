@@ -26,9 +26,11 @@ jobs:
         run: |
           LATEST_DRIVER=$(apt-cache search nvidia-driver | grep -Eo 'nvidia-driver-[0-9]+' | sort -V | tail -n 1 | cut -d '-' -f 2)
           echo "LATEST_DRIVER=${LATEST_DRIVER}" >> $GITHUB_ENV
+          echo "Latest NVIDIA driver version is: $LATEST_DRIVER"
 
       - name: Install NVIDIA driver
         run: |
+          echo "Installing NVIDIA driver version: ${{ env.LATEST_DRIVER }}"
           sudo apt-get install -y nvidia-driver-${{ env.LATEST_DRIVER }}
 
       - name: Reboot system (optional)
