@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libnss3 libssl-dev libgconf-2-4
+          sudo apt-get install -y libnss3 libssl-dev libfontconfig1
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -32,4 +32,4 @@ jobs:
           ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs --version || echo "PhantomJS failed to run."
 
       - name: List installed libraries
-        run: ldd ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs
+        run: ldd ./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs || echo "Could not list libraries."
