@@ -1,0 +1,41 @@
+name: Swift Installation
+
+on:
+  push
+
+jobs:
+  install-swift-ubuntu-22:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ubuntu version and Swift release name
+        run: |
+          image_label="ubuntu$(lsb_release -rs)"
+          swift_version=$(curl -fsSL "https://api.github.com/repos/apple/swift/releases/latest" | jq -r '.tag_name | match("[0-9.]+").string')
+          swift_release_name="swift-${swift_version}-RELEASE-${image_label}"
+          echo "Swift release name: $swift_release_name"
+
+      - name: Install Swift
+        run: |
+          # Add your Swift installation commands here
+          echo "Installing Swift $swift_release_name on Ubuntu 22.04"
+  
+  install-swift-ubuntu-24:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ubuntu version and Swift release name
+        run: |
+          image_label="ubuntu$(lsb_release -rs)"
+          swift_version=$(curl -fsSL "https://api.github.com/repos/apple/swift/releases/latest" | jq -r '.tag_name | match("[0-9.]+").string')
+          swift_release_name="swift-${swift_version}-RELEASE-${image_label}"
+          echo "Swift release name: $swift_release_name"
+
+      - name: Install Swift
+        run: |
+          # Add your Swift installation commands here
+          echo "Installing Swift $swift_release_name on Ubuntu 24.04"
