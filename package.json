@@ -7,6 +7,9 @@
     "@actions/core": "^1.6.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^27.0.0"
   }
 }
