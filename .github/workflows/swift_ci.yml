@@ -1,0 +1,36 @@
+name: Swift CI
+
+on:
+  push
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Swift
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang libicu-dev
+        wget https://swift.org/builds/swift-5.8.1-RELEASE/ubuntu20.04/swift-5.8.1-RELEASE-ubuntu20.04.tar.gz
+        tar xzf swift-5.8.1-RELEASE-ubuntu20.04.tar.gz
+        echo "/home/runner/swift-5.8.1-RELEASE-ubuntu20.04/usr/bin" >> $GITHUB_PATH
+
+    - name: Verify Swift installation
+      run: swift --version
+
+    - name: Build the Swift application
+      run: |
+        swift package init --type executable
+        echo 'import Foundation' > Sources/MySwiftApp/main.swift
+        echo 'let amount1 = Decimal(19.99)' >> Sources/MySwiftApp/main.swift
+        echo 'let amount2 = Decimal(5.75)' >> Sources/MySwiftApp/main.swift
+        echo 'let total = amount1 + amount2' >> Sources/MySwiftApp/main.swift
+        echo 'print("Total Amount: \\(total)")' >> Sources/MySwiftApp/main.swift
+        swift build
+
+    - name: Run the Swift application
+      run: swift run
