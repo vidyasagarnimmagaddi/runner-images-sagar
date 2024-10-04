@@ -1,23 +1,37 @@
 name: Swift CI
 
 on:
-  push
-  
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang libicu-dev curl
+
+    - name: Get Latest Swift Version
+      id: swift_version
+      run: |
+        SWIFT_VERSION=$(curl -s https://swift.org/download/ | grep -oP 'swift-\d+\.\d+\.\d+-RELEASE' | head -1)
+        echo "SWIFT_VERSION=${SWIFT_VERSION}" >> $GITHUB_ENV
 
     - name: Set up Swift
       run: |
-        sudo apt-get update
-        sudo apt-get install -y clang libicu-dev
-        wget https://swift.org/builds/swift-5.8.1-RELEASE/ubuntu20.04/swift-5.8.1-RELEASE-ubuntu20.04.tar.gz
-        tar xzf swift-5.8.1-RELEASE-ubuntu20.04.tar.gz
-        echo "/home/runner/swift-5.8.1-RELEASE-ubuntu20.04/usr/bin" >> $GITHUB_PATH
+        wget https://swift.org/builds/${{ env.SWIFT_VERSION }}/ubuntu20.04/${{ env.SWIFT_VERSION }}.tar.gz
+        tar xzf ${{ env.SWIFT_VERSION }}.tar.gz
+        echo "/home/runner/${{ env.SWIFT_VERSION }}/usr/bin" >> $GITHUB_PATH
 
     - name: Verify Swift installation
       run: swift --version
