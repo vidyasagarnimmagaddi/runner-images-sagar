@@ -1,2 +1,9 @@
-npm init -y
-npm install @actions/core
+{
+  "name": "runner-images-sagar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.6.0"
+  }
+}
