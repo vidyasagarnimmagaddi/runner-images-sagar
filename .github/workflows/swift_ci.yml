@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
     - name: Install Dependencies
       run: |
@@ -24,6 +24,7 @@ jobs:
 
     - name: Set up Swift
       run: |
+        echo "Downloading Swift version: ${{ env.SWIFT_VERSION }}"
         wget https://swift.org/builds/${{ env.SWIFT_VERSION }}/ubuntu20.04/${{ env.SWIFT_VERSION }}.tar.gz
         tar xzf ${{ env.SWIFT_VERSION }}.tar.gz
         echo "/home/runner/${{ env.SWIFT_VERSION }}/usr/bin" >> $GITHUB_PATH
