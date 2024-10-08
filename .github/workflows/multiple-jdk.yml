@@ -1,0 +1,43 @@
+name: Build with multiple JDK versions and Ubuntu versions
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        java-version: [8, 11, 17, 21]
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Install latest Maven
+        run: |
+          MAVEN_VERSION=3.9.9
+          wget https://downloads.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+          tar xzvf apache-maven-$MAVEN_VERSION-bin.tar.gz
+          sudo mv apache-maven-$MAVEN_VERSION /opt/maven
+          sudo rm -f /usr/bin/mvn
+          sudo ln -s /opt/maven/bin/mvn /usr/bin/mvn
+          sudo rm -f apache-maven-$MAVEN_VERSION-bin.tar.gz  # Clean up
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+
+      - run: mvn --version
