@@ -1,0 +1,23 @@
+name: Check Versions
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.x'
+
+    - name: Install gfortran
+      run: sudo apt-get update && sudo apt-get install -y gfortran
+
+    - name: Check gfortran version
+      run: gfortran --version
+
+    - name: Check Go version
+      run: go version
