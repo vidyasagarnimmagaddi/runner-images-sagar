@@ -1,0 +1,39 @@
+name: CDKTF Deployment
+
+on:
+  push
+
+jobs:
+  tf_deployment:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.0
+
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        run: |
+          npm install --force
+          npm install -g cdktf-cli@latest --force
+
+      - name: CDKTF Synth
+        run: |
+          cdktf --app "npx ts-node main.ts" synth
+
+      - name: Upload Terraform Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-artifacts
+          path: path/to/synthesized/files  # Update this path as needed
