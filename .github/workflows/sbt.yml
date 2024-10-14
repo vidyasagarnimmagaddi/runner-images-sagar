@@ -1,0 +1,44 @@
+name: Install SBT
+
+on:
+  push
+
+jobs:
+  install-sbt:
+    runs-on: ubuntu-24.04  
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl tar
+
+      - name: Resolve GitHub release asset URL
+        id: resolve_url
+        run: |
+          url=$(curl -s "https://api.github.com/repos/sbt/sbt/releases/latest" | \
+          grep -Eo 'https://[^"]+\.tgz' | head -n 1)
+          echo "url=$url" >> $GITHUB_ENV
+
+      - name: Download SBT
+        run: |
+          curl -L -o sbt.tgz ${{ env.url }}
+
+      - name: Extract SBT
+        run: |
+          sudo tar zxf sbt.tgz -C /usr/share
+
+      - name: Create symlink
+        run: |
+          sudo ln -s /usr/share/sbt/bin/sbt /usr/bin/sbt
+
+      - name: Cleanup
+        run: |
+          rm -f sbt.tgz
+
+      - name: Verify SBT installation
+        run: |
+          sbt --version
