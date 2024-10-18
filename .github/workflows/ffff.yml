@@ -1,0 +1,86 @@
+
+
+name: windows build workflows
+
+on:
+  push
+  
+permissions:
+  contents: read
+  
+jobs:
+  build:
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      matrix:
+        configuration: [Debug ,Release]
+        platform: [x86 ,x64]
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout main repository code
+        uses: actions/checkout@v4
+        with:
+          ref: 'develop'
+        
+      - name: Checkout dependency repository (xengine)
+        uses: actions/checkout@v4
+        with:
+          repository: libxengine/libxengine
+          path: libxengine
+          
+      - name: sub module checkout (opensource)
+        run: |
+            git submodule init
+            git submodule update
+        shell: pwsh
+
+      - name: vcpkg dependency repository
+        uses: actions/checkout@v4
+        with:
+          repository: microsoft/vcpkg
+          path: vcpkg     
+         
+      - name: vcpkg install (x86)
+        if: matrix.platform == 'x86'  
+        run: |
+            cd vcpkg
+            ./bootstrap-vcpkg.bat
+            ./vcpkg.exe install libsrt:x86-windows libsrtp:x86-windows
+            ./vcpkg.exe integrate install
+        shell: pwsh
+      - name: vcpkg install (x64)
+        if: matrix.platform == 'x64'  
+        run: |
+            cd vcpkg
+            ./bootstrap-vcpkg.bat
+            ./vcpkg.exe install libsrt:x64-windows libsrtp:x64-windows
+            ./vcpkg.exe integrate install
+        shell: pwsh
+
+      - name: Set up Dependency Environment Variables
+        run: |
+          echo "XENGINE_INCLUDE=${{ github.workspace }}/libxengine" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "XENGINE_LIB32=${{ github.workspace }}/libxengine/XEngine_Windows/x86" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "XENGINE_LIB64=${{ github.workspace }}/libxengine/XEngine_Windows/x64" | Out-File -FilePath $env:GITHUB_ENV -Append
+        shell: pwsh
+        
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Solution
+        run: msbuild XEngine_Source/XEngine.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
+
+      - name: Conditional Step for x86 Release
+        if: matrix.configuration == 'Release' && matrix.platform == 'x86'
+        run: |
+          cp -r XEngine_Source/Release/*.dll XEngine_Release/
+          cp -r XEngine_Source/Release/*.exe XEngine_Release/
+          cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
+          cd XEngine_Release
+          ./VSCopy_x86.bat
+          ./XEngine_StreamMediaApp.exe -t        #printf garbled characters
+        shell: pwsh
+
