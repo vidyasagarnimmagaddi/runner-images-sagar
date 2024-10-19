@@ -7,6 +7,10 @@ jobs:
   test:
     runs-on: windows-2019
     steps:
+      - name: Set VCToolsRedistDir
+        shell: cmd
+        run: echo "VCToolsRedistDir=C:\Path\To\VCToolsRedist" >> $GITHUB_ENV
+
       - name: Check if VCToolsRedistDir exists
         shell: cmd
         run: |
