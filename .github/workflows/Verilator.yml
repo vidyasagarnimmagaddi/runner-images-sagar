@@ -3,34 +3,26 @@ name: Install Verilator
 on: [push]
 
 jobs:
-  verilator-ubuntu-20.04:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install Verilator
-        run: sudo apt-get install verilator
-
-  verilator-ubuntu-22.04:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install Verilator
-        run: sudo apt-get install verilator
-
-  verilator-ubuntu-24.04:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install Verilator
-        run: sudo apt-get install verilator
-
-  verilator-ubuntu-latest:
+  install-verilator:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntu-version: [20.04, 22.04, 24.04, latest]
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Ubuntu
+        run: |
+          echo "Setting up Ubuntu ${{ matrix.ubuntu-version }}"
+          sudo apt-get update -y
+
       - name: Install Verilator
-        run: sudo apt-get install verilator
+        run: |
+          echo "Installing Verilator on Ubuntu ${{ matrix.ubuntu-version }}"
+          sudo apt-get install -y verilator
+
+      - name: Verify installation
+        run: |
+          verilator --version
