@@ -11,17 +11,30 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Ubuntu
         run: |
           echo "Setting up Ubuntu ${{ matrix.ubuntu-version }}"
           sudo apt-get update -y
 
-      - name: Install Verilator
+      - name: Install dependencies
         run: |
-          echo "Installing Verilator on Ubuntu ${{ matrix.ubuntu-version }}"
-          sudo apt-get install -y verilator
+          sudo apt-get install -y git make g++ flex bison
+
+      - name: Download Verilator
+        run: |
+          echo "Downloading Verilator version 5.029"
+          wget https://github.com/verilator/verilator/archive/refs/tags/v5.029.tar.gz
+          tar -xzf v5.029.tar.gz
+          cd verilator-5.029
+          git submodule update --init
+
+      - name: Build and install Verilator
+        run: |
+          cd verilator-5.029
+          make
+          sudo make install
 
       - name: Verify installation
         run: |
