@@ -1,0 +1,26 @@
+name: Extract EdgeDriver Certificate Thumbprint
+
+on:
+  push
+jobs:
+  extract_thumbprint:
+    runs-on: windows-latest  # This will run on the latest Windows environment
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download EdgeDriver
+        run: |
+          Invoke-WebRequest -Uri "https://msedgedriver.azureedge.net/130.0.2849.46/edgedriver_win64.zip" -OutFile "edgedriver.zip"
+
+      - name: Unzip EdgeDriver
+        run: |
+          Expand-Archive -Path "edgedriver.zip" -DestinationPath "edgedriver"
+
+      - name: Get Certificate Thumbprint
+        run: |
+          $certPath = "edgedriver/msedgedriver.exe"  # Adjust if necessary based on extraction
+          $cert = Get-AuthenticodeSignature -FilePath $certPath
+          Write-Output "Thumbprint: $($cert.SignerCertificate.Thumbprint)"
+
