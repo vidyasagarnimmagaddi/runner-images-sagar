@@ -1,0 +1,43 @@
+name: Setup Docker on Windows Server 2019
+
+on:
+  push
+
+jobs:
+  setup-docker:
+    runs-on: windows-latest
+    steps:
+      # Step 1: Checkout the code (if needed)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Fetch the latest Docker version for Windows Server 2019
+      - name: Get Latest Docker Version
+        id: docker_version
+        run: |
+          $docker_version = Invoke-WebRequest -Uri "https://download.docker.com/win/stable/Docker%20Desktop%20Installer.exe" -UseBasicP
+          Write-Output "Latest Docker Version: $docker_version"
+
+      # Step 3: Fetch the latest Docker Compose version
+      - name: Get Latest Docker Compose Version
+        id: docker_compose_version
+        run: |
+          $docker_compose_version = Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/latest" -UseBasicP
+          Write-Output "Latest Docker Compose Version: $docker_compose_version"
+
+      # Step 4: Install Docker and Docker Compose (assuming latest versions are fetched)
+      - name: Install Docker
+        run: |
+          Start-Process -FilePath "C:\path\to\Docker Desktop Installer.exe" -ArgumentList "/quiet" -Wait
+
+      - name: Install Docker Compose
+        run: |
+          $compose_version = '${{ steps.docker_compose_version.outputs.version }}'
+          Invoke-WebRequest "https://github.com/docker/compose/releases/download/$compose_version/docker-compose-Windows-x86_64.exe" -OutFile "C:\Program Files\Docker\docker-compose.exe"
+          Write-Output "Docker Compose Installed at C:\Program Files\Docker\docker-compose.exe"
+    
+      # Step 5: Verify Docker and Docker Compose installation
+      - name: Verify Docker Installation
+        run: |
+          docker --version
+          docker-compose --version
