@@ -1,0 +1,39 @@
+name: Checksum for Cosmos DB Emulator
+
+on:
+  push
+
+jobs:
+  checksum:
+    runs-on: windows-latest  # Uses Windows runner in GitHub Actions (supports Windows Server 2019/2022)
+    
+    steps:
+      # Step 1: Checkout the repository (if needed)
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Download Cosmos DB Emulator Installer
+      - name: Download Cosmos DB Emulator
+        run: |
+          $url = "https://aka.ms/cosmosdb-emulator"
+          $outputPath = "$env:USERPROFILE\cosmosdb-emulator-installer.exe"
+          Invoke-WebRequest -Uri $url -OutFile $outputPath
+
+      # Step 3: Compute SHA256 checksum
+      - name: Compute SHA256 checksum
+        run: |
+          $filePath = "$env:USERPROFILE\cosmosdb-emulator-installer.exe"
+          $checksum = Get-FileHash -Path $filePath -Algorithm SHA256
+          Write-Host "SHA256 checksum: $($checksum.Hash)"
+
+      # Optional: Compare to a known checksum value if available (you would replace this value)
+      - name: Compare checksum (Optional)
+        run: |
+          $expectedChecksum = "EXPECTED_SHA256_CHECKSUM_HERE"
+          $calculatedChecksum = $checksum.Hash
+          
+          if ($calculatedChecksum -eq $expectedChecksum) {
+            Write-Host "Checksum matches"
+          } else {
+            Write-Error "Checksum does not match"
+          }
