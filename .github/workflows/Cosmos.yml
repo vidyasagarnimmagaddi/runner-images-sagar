@@ -25,15 +25,3 @@ jobs:
           $filePath = "$env:USERPROFILE\cosmosdb-emulator-installer.exe"
           $checksum = Get-FileHash -Path $filePath -Algorithm SHA256
           Write-Host "SHA256 checksum: $($checksum.Hash)"
-
-      # Optional: Compare to a known checksum value if available (you would replace this value)
-      - name: Compare checksum (Optional)
-        run: |
-          $expectedChecksum = "EXPECTED_SHA256_CHECKSUM_HERE"
-          $calculatedChecksum = $checksum.Hash
-          
-          if ($calculatedChecksum -eq $expectedChecksum) {
-            Write-Host "Checksum matches"
-          } else {
-            Write-Error "Checksum does not match"
-          }
