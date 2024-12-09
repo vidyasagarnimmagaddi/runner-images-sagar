@@ -67,9 +67,7 @@ $packageManagement.AddToolVersion("Helm", $(Get-HelmVersion))
 $packageManagement.AddToolVersion("Homebrew", $(Get-HomebrewVersion))
 $packageManagement.AddToolVersion("Miniconda", $(Get-MinicondaVersion))
 $packageManagement.AddToolVersion("Npm", $(Get-NpmVersion))
-if (-not $(Test-IsUbuntu24)) {
-    $packageManagement.AddToolVersion("NuGet", $(Get-NuGetVersion))
-}
+$packageManagement.AddToolVersion("NuGet", $(Get-NuGetVersion))
 $packageManagement.AddToolVersion("Pip", $(Get-PipVersion))
 $packageManagement.AddToolVersion("Pip3", $(Get-Pip3Version))
 $packageManagement.AddToolVersion("Pipx", $(Get-PipxVersion))
