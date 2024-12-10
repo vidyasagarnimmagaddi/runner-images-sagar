@@ -1,0 +1,30 @@
+name: Install NuGet on Ubuntu 24
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x'
+
+    - name: Install NuGet
+      run: |
+        sudo apt update
+        sudo apt install -y wget apt-transport-https
+        wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+        sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
+        rm microsoft.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod focal main" | sudo tee /etc/apt/sources.list.d/microsoft.list
+        sudo apt update
+        sudo apt install -y nuget
+
+    - name: Verify NuGet installation
+      run: nuget help
