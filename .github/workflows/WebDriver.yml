@@ -1,111 +1,40 @@
-name: Extract Microsoft Edge WebDriver Signature
+name: Extract EdgeDriver Signature
 
 on:
   push
 
 jobs:
   extract_signature:
-    runs-on: windows-latest
+    runs-on: windows-latest  # Use Windows runner for signature verification
 
     steps:
-    # Step 1: Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # Step 2: Set up PowerShell for Windows
-    - name: Set up PowerShell
-      uses: actions/setup-powershell@v2
-
-    # Step 3: Get the Microsoft Edge version and download the WebDriver
-    - name: Get Microsoft Edge version and download WebDriver
+    - name: Download Latest EdgeDriver
       run: |
-        Write-Host "Getting Microsoft Edge WebDriver version..."
+        $url = "https://msedgedriver.azureedge.net/LATEST_RELEASE_131_WINDOWS"
+        $latest_version = Invoke-RestMethod -Uri $url
+        Write-Host "Latest EdgeDriver Version: $latest_version"
+        $download_url = "https://msedgedriver.azureedge.net/$latest_version/msedgedriver_$latest_version.zip"
         
-        # Get the path to the installed Edge binary
-        $edgeBinaryPath = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe").'(default)'
-        if (-not $edgeBinaryPath) {
-            Write-Host "Microsoft Edge is not installed. Exiting script."
-            exit
-        }
-        
-        # Get the version of the installed Edge browser
-        [version] $edgeVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($edgeBinaryPath).ProductVersion
-        Write-Host "Edge version: $edgeVersion"
-        
-        # Define the path for the Edge WebDriver
-        $edgeDriverPath = "$env:GITHUB_WORKSPACE\SeleniumWebDrivers\EdgeDriver"
-        if (-not (Test-Path -Path $edgeDriverPath)) {
-            Write-Host "Creating directory for Edge WebDriver..."
-            New-Item -Path $edgeDriverPath -ItemType Directory -Force
-        }
-        
-        # Determine the latest compatible Edge WebDriver version
-        $versionInfoUrl = "https://msedgedriver.azureedge.net/LATEST_RELEASE_$($edgeVersion.Major)_WINDOWS"
-        try {
-            $versionInfoFile = Invoke-WebRequest -Uri $versionInfoUrl -OutFile "$edgeDriverPath\versioninfo.txt"
-            $latestVersion = Get-Content -Path $versionInfoFile
-            Write-Host "Latest Edge WebDriver version: $latestVersion"
-        } catch {
-            Write-Host "Failed to retrieve the latest version info. Exiting script."
-            exit
-        }
-        
-        # Download the Edge WebDriver archive
-        Write-Host "Downloading Microsoft Edge WebDriver..."
-        $downloadUrl = "https://msedgedriver.azureedge.net/$latestVersion/edgedriver_win64.zip"
-        $archivePath = "$edgeDriverPath\edgedriver_win64.zip"
-        
-        try {
-            Invoke-WebRequest -Uri $downloadUrl -OutFile $archivePath
-        } catch {
-            Write-Host "Failed to download Edge WebDriver. Exiting script."
-            exit
-        }
+        # Download the zip file
+        Invoke-WebRequest -Uri $download_url -OutFile "msedgedriver.zip"
 
-        # Extract the downloaded zip file
-        Write-Host "Extracting Edge WebDriver..."
-        $extractedPath = "$edgeDriverPath\edgedriver"
-        
-        if (-not (Test-Path -Path $extractedPath)) {
-            New-Item -Path $extractedPath -ItemType Directory -Force
-        }
-        
-        try {
-            Expand-Archive -Path $archivePath -DestinationPath $extractedPath -Force
-            Write-Host "Extraction completed successfully."
-        } catch {
-            Write-Host "Failed to extract the WebDriver archive. Exiting script."
-            exit
-        }
-        
-        # Clean up the downloaded zip file
-        Remove-Item -Path $archivePath -Force
-        Write-Host "Download and extraction of Microsoft Edge WebDriver completed successfully."
+    - name: Extract EdgeDriver Zip
+      run: |
+        # Unzip the file
+        Expand-Archive -Path "msedgedriver.zip" -DestinationPath "msedgedriver"
       
-    # Step 4: Extract the signature of the Edge WebDriver executable
-    - name: Extract WebDriver Signature
+    - name: Verify EdgeDriver Signature
       run: |
-        Write-Host "Extracting the signature of the WebDriver executable..."
+        # Navigate to the extracted folder
+        $msedgedriver_path = "msedgedriver/msedgedriver.exe"
 
-        $driverPath = "$env:GITHUB_WORKSPACE\SeleniumWebDrivers\EdgeDriver\edgedriver\edgedriver.exe"
-        if (-Not (Test-Path -Path $driverPath)) {
-            Write-Host "EdgeDriver not found. Exiting script."
-            exit
-        }
+        # Verify the signature of msedgedriver.exe (Windows-specific)
+        signtool verify /pa $msedgedriver_path
 
-        # Extract the signature (Here, you can use sigcheck from Sysinternals or any other tool to extract the signature)
-        $signatureOutput = & "C:\Program Files\SysinternalsSuite\sigcheck.exe" -q -m $driverPath
-        if ($signatureOutput) {
-            Write-Host "Signature extracted successfully."
-            Write-Host $signatureOutput
-        } else {
-            Write-Host "Failed to extract the signature."
-            exit
-        }
-
-    # Optional: Upload the signature for later use or analysis
-    - name: Upload signature result
-      uses: actions/upload-artifact@v3
-      with:
-        name: edgedriver-signature
-        path: signature-output.txt
+    - name: Cleanup
+      run: |
+        Remove-Item -Recurse -Force "msedgedriver"
+        Remove-Item -Force "msedgedriver.zip"
