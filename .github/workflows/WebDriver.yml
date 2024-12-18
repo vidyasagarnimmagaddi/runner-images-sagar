@@ -1,0 +1,33 @@
+name: Download and Extract Edge WebDriver
+
+on:
+  push:
+    paths:
+      - 'images/windows/scripts/build/Install-EdgeDriver.ps1'
+
+jobs:
+  download-edgewebdriver:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup PowerShell
+      uses: actions/setup-powershell@v2
+
+    - name: Run PowerShell script to download and extract Edge WebDriver
+      run: |
+        $edgeDriverPath = "${{ github.workspace }}\edgedriver"
+        $edgeVersion = [System.Version]::Parse((Invoke-WebRequest -Uri "https://msedgedriver.azureedge.net/LATEST_RELEASE").Content.Trim())
+        $versionInfoUrl = "https://msedgedriver.azureedge.net/LATEST_RELEASE_$($edgeVersion.Major)_WINDOWS"
+        $versionInfoFile = Invoke-DownloadWithRetry -Url $versionInfoUrl -Path "$edgeDriverPath\versioninfo.txt"
+        $latestVersion = Get-Content -Path $versionInfoFile
+
+        Write-Host "Download Microsoft Edge WebDriver..."
+        $downloadUrl = "https://msedgedriver.azureedge.net/$latestVersion/edgedriver_win64.zip"
+        $archivePath = Invoke-DownloadWithRetry $downloadUrl
+
+        Write-Host "Expand Microsoft Edge WebDriver archive..."
+        Expand-7ZipArchive -Path $archivePath -DestinationPath $edgeDriverPath
+      shell: pwsh
