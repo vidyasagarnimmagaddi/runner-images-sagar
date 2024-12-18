@@ -1,12 +1,7 @@
 name: Extract Microsoft Edge WebDriver Signature
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  push
 
 jobs:
   extract_signature:
