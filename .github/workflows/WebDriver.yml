@@ -1,9 +1,7 @@
 name: Download and Extract Edge WebDriver
 
 on:
-  push:
-    paths:
-      - 'images/windows/scripts/build/Install-EdgeDriver.ps1'
+  push
 
 jobs:
   download-edgewebdriver:
