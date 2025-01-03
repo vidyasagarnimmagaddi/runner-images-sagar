@@ -223,8 +223,8 @@
     "docker": {
         "images": [],
         "components": {
-            "docker": "26.1.3",
-            "compose": "2.27.1"
+            "docker": "27.4.1",
+            "compose": "2.32.1"
         }
     },
     "pipx": [
