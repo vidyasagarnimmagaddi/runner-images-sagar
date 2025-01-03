@@ -3,12 +3,16 @@ Import-Module "$PSScriptRoot/../helpers/Common.Helpers.psm1"
 $os = Get-OSVersion
 
 Describe "Disk free space" {
-    It "Image has more than 14GB free space" {
-        # we should have at least 14 GB of free space on macOS images
+    It "Image has more than 30GB free space" {
+        # we should have at least 30 GB of free space on macOS images
         # 10GB here: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#capabilities-and-limitations
         # 14GB here: https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-        $freeSpace = (Get-PSDrive "/").Free
-        $freeSpace | Should -BeGreaterOrEqual 14GB
+        # 30GB due to: https://github.com/actions/runner-images/issues/10511
+        $diskInfo = Get-PSDrive "/"
+        $totalSpaceGB = [math]::Floor(($diskInfo.Used + $diskInfo.Free) / 1GB)
+        $freeSpaceGB = [math]::Floor($diskInfo.Free / 1GB)
+        Write-Host "  [i] Disk size: ${totalSpaceGB} GB; Free space: ${freeSpaceGB} GB"
+        $freeSpaceGB | Should -BeGreaterOrEqual 30
     }
 }
 
