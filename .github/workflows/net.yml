@@ -1,0 +1,28 @@
+name: Install .NET SDK
+
+on: [push]
+
+jobs:
+  install_dotnet_sdk:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up .NET Core SDK 9
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y dotnet-sdk-9.0
+
+  install_dotnet_sdk_24_04:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up .NET Core SDK 9
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y dotnet-sdk-9.0
