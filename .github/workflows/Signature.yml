@@ -1,0 +1,52 @@
+name: Check EdgeDriver Signature
+
+on:
+  push
+
+jobs:
+  check-signature:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up PowerShell
+      uses: actions/setup-powershell@v2
+
+    - name: Download Microsoft Edge WebDriver
+      run: |
+        $archiveUrl = "https://msedgedriver.azureedge.net/131.0.2903.146/edgedriver_win64.zip"
+        $archivePath = "$env:TEMP\edgedriver_win64.zip"
+        $edgeDriverPath = "$env:TEMP\edgedriver"
+        
+        Write-Host "Downloading Microsoft Edge WebDriver archive..."
+        Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath
+        
+        Write-Host "Expanding Microsoft Edge WebDriver archive..."
+        Expand-7ZipArchive -Path $archivePath -DestinationPath $edgeDriverPath
+        
+        Write-Host "File extraction completed."
+
+    - name: Check Microsoft Edge WebDriver Signature
+      run: |
+        $signatureThumbprint = "99FCB90C1EEB26D8D12FB3B7FDC6EE248CFE2B92"
+        $driverPath = "$env:TEMP\edgedriver\msedgedriver.exe"
+        
+        Write-Host "Checking signature of msedgedriver.exe..."
+        $actualThumbprint = (Get-AuthenticodeSignature -FilePath $driverPath).Thumbprint
+        
+        if ($actualThumbprint -eq $signatureThumbprint) {
+            Write-Host "Signature is valid. The thumbprint matches the expected value."
+        } else {
+            Write-Host "Signature is invalid. The thumbprint does NOT match the expected value."
+            Write-Host "Expected: $signatureThumbprint"
+            Write-Host "Actual: $actualThumbprint"
+            exit 1
+        }
+    
+    - name: Clean up
+      run: |
+        Remove-Item -Path "$env:TEMP\edgedriver_win64.zip" -Force
+        Remove-Item -Path "$env:TEMP\edgedriver" -Recurse -Force
+        Write-Host "Clean up completed."
