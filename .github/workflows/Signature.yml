@@ -6,13 +6,15 @@ on:
 jobs:
   check-signature:
     runs-on: windows-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up PowerShell
-      uses: actions/setup-powershell@v2
+    - name: Install PowerShell Core (if needed)
+      run: |
+        choco install powershell-core -y
+        $env:PATH += ";C:\Program Files\PowerShell\7"
 
     - name: Download Microsoft Edge WebDriver
       run: |
@@ -24,7 +26,7 @@ jobs:
         Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath
         
         Write-Host "Expanding Microsoft Edge WebDriver archive..."
-        Expand-7ZipArchive -Path $archivePath -DestinationPath $edgeDriverPath
+        Expand-Archive -Path $archivePath -DestinationPath $edgeDriverPath
         
         Write-Host "File extraction completed."
 
