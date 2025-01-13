@@ -1,53 +1,49 @@
-name: Check EdgeDriver Signature
+name: Edge WebDriver Setup on Windows
 
-on:
-  push
+on: [push]
 
 jobs:
-  check-signature:
+  setup:
     runs-on: windows-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install PowerShell Core (if needed)
+    - name: Set up PowerShell for script execution
       run: |
-        choco install powershell-core -y
-        $env:PATH += ";C:\Program Files\PowerShell\7"
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+        $ErrorActionPreference = "Stop"  # Make sure any error stops the script
 
-    - name: Download Microsoft Edge WebDriver
+    - name: Download and Extract Microsoft Edge WebDriver
       run: |
-        $archiveUrl = "https://msedgedriver.azureedge.net/131.0.2903.146/edgedriver_win64.zip"
-        $archivePath = "$env:TEMP\edgedriver_win64.zip"
-        $edgeDriverPath = "$env:TEMP\edgedriver"
+        Write-Host "Downloading Microsoft Edge WebDriver..."
+        $latestVersion = "131.0.2903.146"  # Specify the version if needed
+        $downloadUrl = "https://msedgedriver.azureedge.net/$latestVersion/edgedriver_win64.zip"
         
-        Write-Host "Downloading Microsoft Edge WebDriver archive..."
-        Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath
-        
-        Write-Host "Expanding Microsoft Edge WebDriver archive..."
-        Expand-Archive -Path $archivePath -DestinationPath $edgeDriverPath
-        
-        Write-Host "File extraction completed."
+        # Set the download and extract paths
+        $edgeDriverZipPath = "$env:temp\edgedriver_win64.zip"
+        $edgeDriverPath = "$env:temp\EdgeDriver"
 
-    - name: Extract Signature Thumbprint of EdgeDriver
+        # Download the WebDriver
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $edgeDriverZipPath
+
+        Write-Host "Extracting Microsoft Edge WebDriver..."
+        Expand-Archive -Path $edgeDriverZipPath -DestinationPath $edgeDriverPath
+
+    - name: Validate Microsoft Edge WebDriver Signature
       run: |
-        $driverPath = "$env:TEMP\edgedriver\msedgedriver.exe"
-        
-        Write-Host "Checking signature of msedgedriver.exe..."
-        
-        # Get the signature and extract the thumbprint
-        $signature = Get-AuthenticodeSignature -FilePath $driverPath
-        
-        if ($signature.Status -eq 'Valid') {
-          $thumbprint = $signature.SignatureHash
-          Write-Host "Signature is valid. The thumbprint is: $thumbprint"
+        $edgeDriverExecutable = "$env:temp\EdgeDriver\msedgedriver.exe"
+        $signatureThumbprint = "YOUR_EXPECTED_THUMBPRINT_HERE"  # Replace with the expected thumbprint
+
+        # Load the necessary PowerShell cmdlets
+        $cert = Get-AuthenticodeSignature -FilePath $edgeDriverExecutable
+
+        # Extract and compare thumbprint
+        if ($cert.Status -eq 'Valid' -and $cert.SignerCertificate.Thumbprint -eq $signatureThumbprint) {
+          Write-Host "Microsoft Edge WebDriver signature is valid."
         } else {
-          Write-Host "Signature is not valid. Status: $($signature.Status)"
+          Write-Host "Invalid or missing signature for Edge WebDriver!"
+          exit 1  # Fail the job if the signature is invalid
         }
-    
-    - name: Clean up
-      run: |
-        Remove-Item -Path "$env:TEMP\edgedriver_win64.zip" -Force
-        Remove-Item -Path "$env:TEMP\edgedriver" -Recurse -Force
-        Write-Host "Clean up completed."
+        
