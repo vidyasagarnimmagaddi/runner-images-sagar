@@ -1,4 +1,4 @@
-name: Edge WebDriver Setup on Windows
+name: Edge WebDriveron Windows
 
 on: [push]
 
