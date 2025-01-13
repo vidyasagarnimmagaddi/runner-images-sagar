@@ -1,0 +1,53 @@
+name: Check EdgeDriver Signature
+
+on:
+  push
+
+jobs:
+  check-signature:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install PowerShell Core (if needed)
+      run: |
+        choco install powershell-core -y
+        $env:PATH += ";C:\Program Files\PowerShell\7"
+
+    - name: Download Microsoft Edge WebDriver
+      run: |
+        $archiveUrl = "https://msedgedriver.azureedge.net/131.0.2903.146/edgedriver_win64.zip"
+        $archivePath = "$env:TEMP\edgedriver_win64.zip"
+        $edgeDriverPath = "$env:TEMP\edgedriver"
+        
+        Write-Host "Downloading Microsoft Edge WebDriver archive..."
+        Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath
+        
+        Write-Host "Expanding Microsoft Edge WebDriver archive..."
+        Expand-Archive -Path $archivePath -DestinationPath $edgeDriverPath
+        
+        Write-Host "File extraction completed."
+
+    - name: Extract Signature Thumbprint of EdgeDriver
+      run: |
+        $driverPath = "$env:TEMP\edgedriver\msedgedriver.exe"
+        
+        Write-Host "Checking signature of msedgedriver.exe..."
+        
+        # Get the signature and extract the thumbprint
+        $signature = Get-AuthenticodeSignature -FilePath $driverPath
+        
+        if ($signature.Status -eq 'Valid') {
+          $thumbprint = $signature.SignatureHash
+          Write-Host "Signature is valid. The thumbprint is: $thumbprint"
+        } else {
+          Write-Host "Signature is not valid. Status: $($signature.Status)"
+        }
+    
+    - name: Clean up
+      run: |
+        Remove-Item -Path "$env:TEMP\edgedriver_win64.zip" -Force
+        Remove-Item -Path "$env:TEMP\edgedriver" -Recurse -Force
+        Write-Host "Clean up completed."
