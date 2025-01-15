@@ -1,0 +1,25 @@
+name: Show
+
+on: 
+  push:
+
+jobs:
+  show:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04]
+    
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 1
+    
+    steps:
+      - name: Show Podman system info before enabling socket
+        run: podman system info
+
+      - name: Enable and start podman.socket
+        run: |
+          sudo systemctl enable --now podman.socket
+          sudo systemctl start podman.socket
+      
+      - name: Show Podman system info after enabling socket
+        run: podman system info
