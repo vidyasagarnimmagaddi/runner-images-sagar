@@ -1,25 +1,25 @@
 name: Show
-
-on: 
-  push:
-
+on: push
 jobs:
   show:
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-22.04]
-    
     runs-on: ${{ matrix.os }}
     timeout-minutes: 1
-    
     steps:
-      - name: Show Podman system info before enabling socket
-        run: podman system info
-
-      - name: Enable and start podman.socket
+      # Ensure Podman is installed and the remote socket is enabled
+      - name: Install Podman
         run: |
-          sudo systemctl enable --now podman.socket
-          sudo systemctl start podman.socket
-      
-      - name: Show Podman system info after enabling socket
+          sudo apt update
+          sudo apt install -y podman
+
+      # Enable the remote socket
+      - name: Start Podman service and enable remote socket
+        run: |
+          sudo systemctl --user enable podman.socket
+          sudo systemctl --user start podman.socket
+
+      # Run Podman info to check if remotesocket is enabled
+      - name: Show Podman system info
         run: podman system info
