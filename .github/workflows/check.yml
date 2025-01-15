@@ -4,19 +4,8 @@ jobs:
   show:
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04]
+        os: [ ubuntu-latest, ubuntu-22.04 ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 1
     steps:
-   
-      - name: Show Podman system info
-        run: podman system info
-      # Enable the remote socket
-      - name: Start Podman service and enable remote socket
-        run: |
-          sudo systemctl --user enable podman.socket
-          sudo systemctl --user start podman.socket
-
-      # Run Podman info to check if remotesocket is enabled
-      - name: Show Podman system info
-        run: podman system info
+      - run: podman system info
