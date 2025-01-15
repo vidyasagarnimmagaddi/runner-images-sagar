@@ -8,12 +8,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 1
     steps:
-      # Ensure Podman is installed and the remote socket is enabled
-      - name: Install Podman
-        run: |
-          sudo apt update
-          sudo apt install -y podman
-
+   
+      - name: Show Podman system info
+        run: podman system info
       # Enable the remote socket
       - name: Start Podman service and enable remote socket
         run: |
