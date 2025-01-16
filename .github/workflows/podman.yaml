@@ -1,0 +1,37 @@
+name: Podman Setup
+
+on: [push]
+
+jobs:
+  setup-podman:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Podman
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install podman
+
+    - name: Start Podman service
+      run: |
+        systemctl --user start podman
+        systemctl --user enable podman
+
+    - name: Verify Podman socket
+      run: |
+        export XDG_RUNTIME_DIR=/run/user/1001
+        podman info
+      env:
+        XDG_RUNTIME_DIR: /run/user/1001
+
+    - name: Check Podman socket
+      run: |
+        if [ -S /run/user/1001/podman/podman.sock ]; then
+          echo "Podman socket exists"
+        else
+          echo "Podman socket does not exist"
+          exit 1
+        fi
