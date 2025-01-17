@@ -1,0 +1,22 @@
+name: Run rustc on Ubuntu 24
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04  # Make sure this corresponds to the version you're using (currently, Ubuntu 24 may not be stable, so verify the exact name).
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable  # You can specify other versions like "nightly" or "1.58.0"
+
+      - name: Run rustc
+        run: |
+          rustc --version   # This will display the installed version of rustc
+          
