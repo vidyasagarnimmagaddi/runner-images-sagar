@@ -178,6 +178,7 @@
         "version" : "2022",
         "subversion" : "17",
         "edition" : "Enterprise",
+        "InstallChannelUri": "141694069_2050883872",
         "channel": "release",
         "signature": "8F985BE8FD256085C90A95D3C74580511A1DB975",
         "workloads": [

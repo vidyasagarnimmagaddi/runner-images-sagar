@@ -27,6 +27,7 @@ Function Install-VisualStudio {
         [Parameter(Mandatory)] [String] $Version,
         [Parameter(Mandatory)] [String] $Edition,
         [Parameter(Mandatory)] [String] $Channel,
+        [Parameter(Mandatory)] [String] $InstallChannelUri,
         [Parameter(Mandatory)] [String[]] $RequiredComponents,
         [String] $ExtraArgs = "",
         [Parameter(Mandatory)] [String[]] $SignatureThumbprint
@@ -45,7 +46,7 @@ Function Install-VisualStudio {
 
     try {
         $responseData = @{
-            "installChannelUri" = "141694069_2050883872"
+            "installChannelUri" = $InstallChannelUri
             "channelUri" = $channelUri
             "channelId"  = $channelId
             "productId"  = $productId
