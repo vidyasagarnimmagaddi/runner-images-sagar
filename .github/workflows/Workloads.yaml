@@ -11,17 +11,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install .NET 8 SDK
+      - name: Install .NET 7 SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 7.0.x
 
       - name: List installed workloads
         run: |
-          echo "Listing installed workloads for .NET 8:"
+          echo "Listing installed workloads for .NET 7:"
           dotnet workload list
 
       - name: Search available workloads
         run: |
-          echo "Searching for available workloads for .NET 8:"
+          echo "Searching for available workloads for .NET 7:"
           dotnet workload search
