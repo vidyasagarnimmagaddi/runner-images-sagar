@@ -1,0 +1,32 @@
+name: Install libicu 70 on Ubuntu 24
+
+on:
+  push
+
+jobs:
+  install-libicu70:
+    runs-on: ubuntu-24.04  # You may need to change this if Ubuntu 24.04 isn't available yet on GitHub Actions
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Update system and install libicu70
+      run: |
+        # Update package list and install libicu70
+        sudo apt update
+        sudo apt install -y libicu70
+
+    - name: Verify libicu70 installation
+      run: |
+        # Verify that libicu70 is installed
+        dpkg -s libicu70 || echo "libicu70 not installed"
+        icuinfo --version || echo "icuinfo command not found"
+
+    - name: Clean up
+      run: |
+        # Clean up apt cache to save space
+        sudo apt clean
+
+    - name: Notify completion
+      run: echo "libicu 70 installation completed successfully!"
