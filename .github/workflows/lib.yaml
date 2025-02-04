@@ -1,9 +1,9 @@
-name: Install libicu 70
+name: List Available Versions of libicu
 
 on: [push]
 
 jobs:
-  install-libicu:
+  list-libicu-versions:
     runs-on: ubuntu-latest
     
     steps:
@@ -13,8 +13,5 @@ jobs:
     - name: Update package list
       run: sudo apt-get update
 
-    - name: Install specific version of libicu 70
-      run: sudo apt-get install -y libicu70=70.1-2ubuntu4 libicu-dev=70.1-2ubuntu4
-
-    - name: Verify libicu installation
-      run: dpkg -l | grep libicu
+    - name: List available versions of libicu
+      run: apt-cache show libicu-dev | grep Version
