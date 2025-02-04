@@ -1,0 +1,27 @@
+name: List .NET 8 Workloads
+
+on:
+  push
+
+jobs:
+  list-workloads:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: List installed workloads
+        run: |
+          echo "Listing installed workloads for .NET 8:"
+          dotnet workload list
+
+      - name: Search available workloads
+        run: |
+          echo "Searching for available workloads for .NET 8:"
+          dotnet workload search
