@@ -1,17 +1,28 @@
-name: List Available Versions of libicu
+
+name: Check Environment and Runner Info
 
 on: [push]
 
 jobs:
-  list-libicu-versions:
-    runs-on: ubuntu-latest
-    
+  build:
+    runs-on: ubuntu-24.04
     steps:
-    - name: Check out the repository
-      uses: actions/checkout@v2
+      - name: Check Ubuntu version
+        run: lsb_release -a
 
-    - name: Update package list
-      run: sudo apt-get update
+      - name: Check architecture
+        run: uname -m
 
-    - name: List available versions of libicu
-      run: apt-cache show libicu-dev | grep Version
+      - name: Check git version
+        run: git --version
+
+      - name: Check environment variables
+        run: printenv | grep -i 'runner'
+
+      - name: Enable Debugging
+        run: |
+          echo "ACTIONS_RUNNER_DEBUG=true" >> $GITHUB_ENV
+          echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+
+      - name: Check apt logs
+        run: cat /var/log/apt/history.log || echo "No apt history logs found"
