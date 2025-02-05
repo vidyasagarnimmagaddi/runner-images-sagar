@@ -15,7 +15,7 @@ if is_ubuntu20; then
     gem install public_suffix -v 5.1.1
 fi
 
-# Install ruby gems from toolset
+echo  "Install ruby gems from toolset...." 
 gems_to_install=$(get_toolset_value ".rubygems[] .name")
 if [[ -n "$gems_to_install" ]]; then
     for gem in $gems_to_install; do
@@ -24,7 +24,7 @@ if [[ -n "$gems_to_install" ]]; then
     done
 fi
 
-# Install Ruby requirements
+echo  " Install Ruby requirements...."
 apt-get install libz-dev openssl libssl-dev
 
 echo "Install Ruby from toolset..."
