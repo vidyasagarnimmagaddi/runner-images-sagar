@@ -363,7 +363,7 @@
             "mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019"
         ],
         "components": {
-            "docker": "27.5.0",
+            "docker": "27.5.1",
             "compose": "2.32.2"
         }
     },

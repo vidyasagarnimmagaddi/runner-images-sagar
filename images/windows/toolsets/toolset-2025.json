@@ -227,7 +227,7 @@
     "docker": {
         "images": [],
         "components": {
-            "docker": "27.5.0",
+            "docker": "27.5.1",
             "compose": "2.32.2"
         }
     },
