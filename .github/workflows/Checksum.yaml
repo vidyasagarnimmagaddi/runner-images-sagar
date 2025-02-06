@@ -1,0 +1,17 @@
+name: Extract SHA256 Checksum
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  sha256sum:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download File
+        run: Invoke-WebRequest -Uri https://github.com/microsoft/WSL/releases/download/2.4.10/wsl.2.4.10.0.x64.msi -OutFile wsl.2.4.10.0.x64.msi
+
+      - name: Compute SHA256 Checksum
+        run: Get-FileHash wsl.2.4.10.0.x64.msi -Algorithm SHA256 | Format-List
