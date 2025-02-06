@@ -1,7 +1,7 @@
 name: Extract SHA256 Checksum
 
 on: 
-  workflow_dispatch:
+  push
 
 jobs:
   sha256sum:
