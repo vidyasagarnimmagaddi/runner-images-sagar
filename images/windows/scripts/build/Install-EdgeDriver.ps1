@@ -27,9 +27,19 @@ Write-Host "Expand Microsoft Edge WebDriver archive..."
 Expand-7ZipArchive -Path $archivePath -DestinationPath $edgeDriverPath
 
 #Validate the EdgeDriver signature
-$signatureThumbprint = "7920AC8FB05E0FFFE21E8FF4B4F03093BA6AC16E"
-Test-FileSignature -Path "$edgeDriverPath\msedgedriver.exe" -ExpectedThumbprint $signatureThumbprint
+# Validate the EdgeDriver signature
+$signatureThumbprint1 = "7920AC8FB05E0FFFE21E8FF4B4F03093BA6AC16E"
+$signatureThumbprint2 = "0BD8C56733FDCC06F8CB919FF5A200E39B1ACF71"  
+$signatureValid = $false
+if (Test-FileSignature -Path "$edgeDriverPath\msedgedriver.exe" -ExpectedThumbprint $signatureThumbprint1) {
+    $signatureValid = $true
+} elseif (Test-FileSignature -Path "$edgeDriverPath\msedgedriver.exe" -ExpectedThumbprint $signatureThumbprint2) {
+    $signatureValid = $true
+}
 
+if (-not $signatureValid) {
+    throw "The EdgeDriver signature validation failed."
+}
 Write-Host "Setting the environment variables..."
 [Environment]::SetEnvironmentVariable("EdgeWebDriver", $EdgeDriverPath, "Machine")
 Add-MachinePathItem "$edgeDriverPath\"
