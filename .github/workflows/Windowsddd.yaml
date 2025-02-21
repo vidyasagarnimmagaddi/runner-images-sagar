@@ -1,0 +1,26 @@
+name: Install Git 2.47.1 on Windows
+
+on:
+  push
+
+jobs:
+  install_git:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download Git installer
+      run: |
+        $gitVersion = "2.47.1"
+        $gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v$gitVersion/Git-$gitVersion-64-bit.exe"
+        Invoke-WebRequest -Uri $gitInstallerUrl -OutFile "Git-$gitVersion-64-bit.exe"
+
+    - name: Install Git
+      run: |
+        Start-Process -FilePath ".\Git-$gitVersion-64-bit.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" -Wait
+        Remove-Item -Force ".\Git-$gitVersion-64-bit.exe"
+
+    - name: Verify Git Installation
+      run: git --version
