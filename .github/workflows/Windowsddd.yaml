@@ -1,4 +1,4 @@
-name: Install Git 2.47.1 on Windows
+name: Install Git 2.47.1.windows.2 on Windows
 
 on:
   push
@@ -13,7 +13,7 @@ jobs:
 
     - name: Download Git installer
       run: |
-        $gitVersion = "2.47.1"
+        $gitVersion = "2.47.1.windows.2"
         $gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v$gitVersion/Git-$gitVersion-64-bit.exe"
         Invoke-WebRequest -Uri $gitInstallerUrl -OutFile "Git-$gitVersion-64-bit.exe"
 
