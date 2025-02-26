@@ -11,8 +11,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      - name: Install libc6-dev
+      - name: Install sudo and libc6-dev
         run: |
           apt update
-          apt install -y libc6-dev
+          apt install -y sudo
+          sudo apt install -y libc6-dev
       - run: python
