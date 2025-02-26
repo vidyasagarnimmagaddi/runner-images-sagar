@@ -187,6 +187,7 @@
     ],
     "docker": {
         "images": [
+            "ubuntu:24.04"
         ],
         "components": [
             {
