@@ -4,7 +4,7 @@ on:
 
 jobs:
   not_working:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container:
       image: python:3.10-slim
     steps:
