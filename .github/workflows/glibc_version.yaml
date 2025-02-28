@@ -1,7 +1,7 @@
 name: Check glibc Version
 
 on:
-  workflow_dispatch:
+  push
 
 jobs:
   check-glibc-version:
