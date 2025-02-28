@@ -1,0 +1,25 @@
+name: glinccc
+on: push
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.10-slim
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Upgrade glibc to 2.38
+        run: |
+          apt-get update
+          apt-get install -y wget build-essential
+          wget http://ftp.gnu.org/gnu/libc/glibc-2.38.tar.gz
+          tar -xzvf glibc-2.38.tar.gz
+          cd glibc-2.38
+          mkdir build
+          cd build
+          ../configure --prefix=/opt/glibc-2.38
+          make -j$(nproc)
+          make install
+          export LD_LIBRARY_PATH=/opt/glibc-2.38/lib:$LD_LIBRARY_PATH
+      - run: python
