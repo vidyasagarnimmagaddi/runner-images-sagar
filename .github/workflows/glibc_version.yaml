@@ -1,0 +1,21 @@
+name: Check glibc Version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-glibc-version:
+    runs-on: ${{ matrix.ubuntu-version }}
+
+    strategy:
+      matrix:
+        ubuntu-version: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]  # Ubuntu versions to check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Print glibc version
+        run: |
+          echo "Checking glibc version on Ubuntu ${{ matrix.ubuntu-version }}"
+          ldd --version
