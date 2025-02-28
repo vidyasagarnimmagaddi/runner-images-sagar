@@ -6,9 +6,9 @@ jobs:
   not_working:
     runs-on: ubuntu-latest
     container:
-      image: python:3.10.16-slim
+      image: python:3.10-slim
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.10.16"
       - run: python
