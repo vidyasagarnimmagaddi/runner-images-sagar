@@ -1,27 +1,21 @@
-name: glicccc
-on: push
+name: Check glibc Versionsssss
+
+on:
+
+  push
+
 jobs:
-  not_working:
+  check_glibc_version:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.10-slim
+
     steps:
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install build dependencies
+      - name: Checkout repository (if needed)
+        uses: actions/checkout@v3
+        
+      - name: Set up Docker container and check glibc version
         run: |
-          apt-get update
-          apt-get install -y wget build-essential gawk bison python3
-      - name: Upgrade glibc to 2.38
-        run: |
-          wget http://ftp.gnu.org/gnu/libc/glibc-2.38.tar.gz
-          tar -xzvf glibc-2.38.tar.gz
-          cd glibc-2.38
-          mkdir build
-          cd build
-          ../configure --prefix=/opt/glibc-2.38
-          make -j$(nproc)
-          make install
-          export LD_LIBRARY_PATH=/opt/glibc-2.38/lib:$LD_LIBRARY_PATH
-      - run: python
+          # Run the container with Python 3.10-slim image
+          docker run --rm python:3.10-slim /bin/bash -c "ldd --version"
+
+          # Alternatively, use strings to check glibc version
+          docker run --rm python:3.10-slim /bin/bash -c "strings /lib/x86_64-linux-gnu/libc.so.6 | grep GLIBC"
