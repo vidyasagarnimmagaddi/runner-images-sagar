@@ -1,4 +1,4 @@
-name: Install PostgreSQL 13 on Ubuntu 22.04
+name: Install
 
 on:
   push
