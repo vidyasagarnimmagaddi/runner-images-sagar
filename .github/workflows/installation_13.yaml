@@ -19,6 +19,13 @@ jobs:
           sudo apt update
           sudo apt install -y libpq-dev libffi-dev libssl-dev libkrb5-dev zlib1g-dev postgresql-13 postgresql-13-pldebugger pgagent
 
+      - name: Verify PostgreSQL 13 installation
+        run: |
+          sudo apt list --installed | grep postgresql
+          sudo ls -la /etc/postgresql/
+          sudo ls -la /etc/postgresql/13/
+          sudo ls -la /etc/postgresql/13/main/
+
       - name: Start PostgreSQL on Linux
         run: |
           sudo ls -la /etc/postgresql/
