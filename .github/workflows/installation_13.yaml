@@ -11,10 +11,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Update and install PostgreSQL 13
+    - name: Update and install PostgreSQL 14
       run: |
         sudo apt update
-        sudo apt install -y postgresql-13
+        sudo apt install -y postgresql-14
         sudo systemctl start postgresql
         sudo systemctl enable postgresql
 
