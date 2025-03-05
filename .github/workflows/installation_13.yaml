@@ -21,13 +21,16 @@ jobs:
 
       - name: Verify PostgreSQL 13 installation
         run: |
+          # Checking installed packages to ensure PostgreSQL 13 is installed
           sudo apt list --installed | grep postgresql
+          # Verify the existence of directories
           sudo ls -la /etc/postgresql/
           sudo ls -la /etc/postgresql/13/
           sudo ls -la /etc/postgresql/13/main/
 
-      - name: Start PostgreSQL on Linux
+      - name: Start PostgreSQL 13 on Linux
         run: |
+          # Verify PostgreSQL directories and attempt to start it
           sudo ls -la /etc/postgresql/
           sudo ls -la /etc/postgresql/13/main/
           sudo su - postgres -c "/usr/lib/postgresql/13/bin/postgres -D /var/lib/postgresql/13/main -c config_file=/etc/postgresql/13/main/postgresql.conf &"
