@@ -1,9 +1,7 @@
 name: Install PostgreSQL 13 on Ubuntu 22.04
 
 on:
-  push:
-    branches:
-      - main
+  push
 
 jobs:
   install_postgresql:
