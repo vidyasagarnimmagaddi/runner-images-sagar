@@ -96,9 +96,7 @@ $tools.AddToolVersion("gcc", $(Get-GCCVersion))
 $tools.AddToolVersion("gdb", $(Get-GDBVersion))
 $tools.AddToolVersion("GNU Binutils", $(Get-GNUBinutilsVersion))
 $tools.AddToolVersion("Newman", $(Get-NewmanVersion))
-if (-not (Test-IsWin25)) {
-    $tools.AddToolVersion("NSIS", $(Get-NSISVersion))
-}
+$tools.AddToolVersion("NSIS", $(Get-NSISVersion))
 $tools.AddToolVersion("OpenSSL", $(Get-OpenSSLVersion))
 $tools.AddToolVersion("Packer", $(Get-PackerVersion))
 if (Test-IsWin19) {
