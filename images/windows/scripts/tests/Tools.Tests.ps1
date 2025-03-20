@@ -208,7 +208,7 @@ Describe "Kotlin" {
             "kapt -Kapt-mode=stubsAndApt -version" | Should -ReturnZeroExitCode
         } else {
             "$toolName -version" | Should -ReturnZeroExitCode
-    }
+        }
     }
 }
 
