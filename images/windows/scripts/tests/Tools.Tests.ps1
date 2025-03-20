@@ -209,7 +209,7 @@ Describe "Kotlin" {
         } else {
             "$toolName -version" | Should -ReturnZeroExitCode
     }
-}
+    }
 }
 
 Describe "SQL OLEDB Driver" {
