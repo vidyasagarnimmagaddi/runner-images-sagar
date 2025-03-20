@@ -210,6 +210,7 @@ Describe "Kotlin" {
             "$toolName -version" | Should -ReturnZeroExitCode
     }
 }
+}
 
 Describe "SQL OLEDB Driver" {
     It "SQL OLEDB Driver" {
