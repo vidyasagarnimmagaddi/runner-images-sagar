@@ -166,8 +166,8 @@ function Get-GradleVersion {
 }
 
 function Get-SbtVersion {
-    (sbt -version) -match "sbt (?<version>\d+\.\d+\.\d+)"| Get-StringPart -Part 3
-}
+    sbt --script-version
+}    
 
 function Get-DotnetSdks {
     $sdksRawList = dotnet --list-sdks
