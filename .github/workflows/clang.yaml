@@ -1,7 +1,13 @@
-name: Install Clang 18
+name: Install Clang
 
 on:
-  push
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,20 +15,44 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Clang 18
+      - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y wget lsb-release software-properties-common
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm.asc
-          echo "deb http://apt.llvm.org/$(lsb_release -cs)/ llvm-toolchain-$(lsb_release -cs)-18 main" | sudo tee /etc/apt/sources.list.d/llvm.list
-          sudo apt update
-          sudo apt install -y clang-18 lld-18 lldb-18
+          sudo apt install -y wget lsb-release software-properties-common jq
 
-      - name: Set Clang 18 as Default
+      - name: Install Clang
         run: |
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-          clang --version
+          install_clang() {
+              local version=$1
+              echo "Installing clang-$version..."
+              sudo apt-get install -y "clang-$version" "lldb-$version" "lld-$version" "clang-format-$version" "clang-tidy-$version"
+          }
+
+          set_default_clang() {
+              local version=$1
+              echo "Make Clang ${version} default"
+              sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${version} 100
+              sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${version} 100
+              sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-${version} 100
+              sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-${version} 100
+              sudo update-alternatives --install /usr/bin/run-clang-tidy run-clang-tidy /usr/bin/run-clang-tidy-${version} 100
+          }
+
+          get_toolset_value() {
+              echo "18"  # Placeholder function; replace with actual implementation if needed
+          }
+
+          versions=$(get_toolset_value '.clang.versions[]')
+          default_clang_version=$(get_toolset_value '.clang.default_version')
+
+          for version in ${versions[*]}; do
+              if [[ $version != $default_clang_version ]]; then
+                  install_clang $version
+              fi
+          done
+
+          install_clang $default_clang_version
+          set_default_clang $default_clang_version
 
       - name: Verify Installation
         run: |
