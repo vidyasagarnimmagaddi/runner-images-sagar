@@ -1,4 +1,4 @@
-name: Install Latest PHP from Ubuntu Packages
+name: Install PHP 8.4 from Ubuntu Packages
 
 on:
   push
@@ -13,9 +13,9 @@ jobs:
       - name: Update package list
         run: sudo apt-get update
       
-      - name: Install PHP and extensions
+      - name: Install PHP 8.4 and extensions
         run: |
-          sudo apt-get install -y php php-cli php-common php-mbstring php-xml php-curl php-zip php-intl php-bcmath php-gd php-mysql php-soap php-xmlrpc
+          sudo apt-get install -y php8.4 php8.4-cli php8.4-common php8.4-mbstring php8.4-xml php8.4-curl php8.4-zip php8.4-intl php8.4-bcmath php8.4-gd php8.4-mysql php8.4-soap
       
       - name: Verify PHP Installation
         run: |
