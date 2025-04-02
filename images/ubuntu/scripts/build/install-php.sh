@@ -77,7 +77,7 @@ for version in $php_versions; do
         apt-get install --no-install-recommends php$version-recode
     fi
 
-    if [[ $version != "8.0" && $version != "8.1" && $version != "8.2" && $version != "8.3" ]]; then
+    if [[ $version != "8.0" && $version != "8.1" && $version != "8.2" && $version != "8.3" && $version != "8.4" ]]; then
         apt-get install --no-install-recommends php$version-xmlrpc php$version-json
     fi
 done
