@@ -1,0 +1,17 @@
+name: Install Rust on Ubuntu 22
+
+on:
+  push
+
+jobs:
+  install-rust:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Make script executable
+        run: chmod +x .github/workflows/install-rust.sh
+
+      - name: Run install-rust.sh
+        run: .github/workflows/install-rust.sh
