@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Download Aliyun CLI
         run: |
-          curl -L -o aliyun-cli.tgz https://github.com/aliyun/aliyun-cli/releases/download/v3.0.174/aliyun-cli-linux-3.0.174-amd64.tgz
+          curl -L -o aliyun-cli.tgz https://github.com/aliyun/aliyun-cli/releases/download/v3.0.268/aliyun-cli-linux-3.0.268-amd64.tgz
 
       - name: Compute SHA256 Checksum
         run: |
