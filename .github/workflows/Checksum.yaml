@@ -1,0 +1,17 @@
+name: Compute Aliyun CLI Checksum
+
+on:
+  push
+
+jobs:
+  compute-checksum:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Aliyun CLI
+        run: |
+          curl -L -o aliyun-cli.tgz https://github.com/aliyun/aliyun-cli/releases/download/v3.0.174/aliyun-cli-linux-3.0.174-amd64.tgz
+
+      - name: Compute SHA256 Checksum
+        run: |
+          sha256sum aliyun-cli.tgz > checksum.txt
+          cat checksum.txt
