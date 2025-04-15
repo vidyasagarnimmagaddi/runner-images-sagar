@@ -372,5 +372,15 @@
     },
     "pwsh": {
         "version": "7.4"
+    },
+    "aliyunCli": {
+        "version": "3.0.268",
+        "sha256": "451bffd69ad3a6c793b55590bcbd23a609057348c4fedee91f0cdeb90009bc70",
+        "pinnedDetails": {
+            "link": "https://github.com/aliyun/aliyun-cli/issues/1222",
+            "reason": "Version appears as 0.0.1 after V3.0.269",
+            "review-at": "2025-06-01",
+            "type": "preexisting-pinned-version-with-reason"
+        }
     }
 }
