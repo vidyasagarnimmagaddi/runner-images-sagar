@@ -113,7 +113,8 @@
             "jq",
             "tar",
             "unzip",
-            "wget"
+            "wget",
+            "httpie"
         ],
         "common_packages": [
             "autoconf",
