@@ -1,0 +1,51 @@
+name: Check Kotlin Tools
+
+on:
+  push
+
+jobs:
+  kotlin-tools-test:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Kotlin
+      run: |
+        $version = "2.1.21"
+        $url = "https://github.com/JetBrains/kotlin/releases/download/v$version/kotlin-compiler-$version.zip"
+        $zipPath = "$env:RUNNER_TEMP\kotlin.zip"
+        $extractPath = "C:\tools\kotlin"
+
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
+        Expand-Archive -Path $zipPath -DestinationPath $extractPath
+        $env:PATH += ";$extractPath\bin"
+        [Environment]::SetEnvironmentVariable("PATH", $env:PATH, [EnvironmentVariableTarget]::Process)
+
+    - name: Install Pester
+      run: Install-Module -Name Pester -Force -Scope CurrentUser
+
+    - name: Create Pester Test Script
+      run: |
+        $testScript = @'
+Describe "Kotlin" {
+    $kotlinTools = @(
+        @{ Name = "kotlin"; CheckCommand = "kotlin -version" },
+        @{ Name = "kotlinc"; CheckCommand = "kotlinc -version" },
+        @{ Name = "kotlinc-jvm"; CheckCommand = "kotlinc-jvm -version" },
+        @{ Name = "kotlinc-js"; CheckCommand = "kotlinc-js --help" },
+        @{ Name = "kapt"; CheckCommand = "kapt -help" }
+    )
+
+    It "<Name> is available" -TestCases $kotlinTools {
+        Invoke-Expression $CheckCommand | Should -Not -BeNullOrEmpty
+    }
+}
+'@
+        $testScript | Out-File -FilePath "$env:RUNNER_TEMP\Kotlin.Tests.ps1" -Encoding utf8
+
+    - name: Run Pester Tests
+      run: |
+        Import-Module Pester
+        Invoke-Pester -Script "$env:RUNNER_TEMP\Kotlin.Tests.ps1" -CI
