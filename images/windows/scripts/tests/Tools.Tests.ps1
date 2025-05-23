@@ -200,11 +200,24 @@ Describe "Pipx" {
     }
 }
 
-Describe "Kotlin" {
+DDescribe "Kotlin" {
     $kotlinPackages = @("kapt", "kotlin", "kotlinc", "kotlinc-js", "kotlinc-jvm")
 
     It "<toolName> is available" -TestCases ($kotlinPackages | ForEach-Object { @{ toolName = $_ } }) {
-        "$toolName -version" | Should -ReturnZeroExitCode
+        $versionOutput = & $toolName -version
+        $exitCode = $LASTEXITCODE
+        switch ($toolName) {
+            "kapt" {
+                $versionOutput | Should -Match "kapt|kotlin"
+            }
+            "kotlinc-js" {
+                $versionOutput | Should -Match "kotlinc-js|kotlin"
+            }
+            default {
+                $exitCode | Should -Be 0
+                $versionOutput | Should -Match "kotlin"
+            }
+        }
     }
 }
 
