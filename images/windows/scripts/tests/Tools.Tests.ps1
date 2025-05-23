@@ -200,7 +200,7 @@ Describe "Pipx" {
     }
 }
 
-DDescribe "Kotlin" {
+Describe "Kotlin" {
     $kotlinPackages = @("kapt", "kotlin", "kotlinc", "kotlinc-js", "kotlinc-jvm")
 
     It "<toolName> is available" -TestCases ($kotlinPackages | ForEach-Object { @{ toolName = $_ } }) {
