@@ -24,25 +24,26 @@ jobs:
         [Environment]::SetEnvironmentVariable("PATH", $env:PATH, [EnvironmentVariableTarget]::Process)
 
     - name: Install Pester
-      run: Install-Module -Name Pester -Force -Scope CurrentUser
+      run: |
+        Install-Module -Name Pester -Force -Scope CurrentUser
 
     - name: Create Pester Test Script
       run: |
-        $testScript = @'
-Describe "Kotlin" {
-    $kotlinTools = @(
-        @{ Name = "kotlin"; CheckCommand = "kotlin -version" },
-        @{ Name = "kotlinc"; CheckCommand = "kotlinc -version" },
-        @{ Name = "kotlinc-jvm"; CheckCommand = "kotlinc-jvm -version" },
-        @{ Name = "kotlinc-js"; CheckCommand = "kotlinc-js --help" },
-        @{ Name = "kapt"; CheckCommand = "kapt -help" }
+        $testScript = @"
+Describe 'Kotlin' {
+    \$kotlinTools = @(
+        @{ Name = 'kotlin'; CheckCommand = 'kotlin -version' },
+        @{ Name = 'kotlinc'; CheckCommand = 'kotlinc -version' },
+        @{ Name = 'kotlinc-jvm'; CheckCommand = 'kotlinc-jvm -version' },
+        @{ Name = 'kotlinc-js'; CheckCommand = 'kotlinc-js --help' },
+        @{ Name = 'kapt'; CheckCommand = 'kapt -help' }
     )
 
-    It "<Name> is available" -TestCases $kotlinTools {
-        Invoke-Expression $CheckCommand | Should -Not -BeNullOrEmpty
+    It '<Name> is available' -TestCases \$kotlinTools {
+        Invoke-Expression \$CheckCommand | Should -Not -BeNullOrEmpty
     }
 }
-'@
+"@
         $testScript | Out-File -FilePath "$env:RUNNER_TEMP\Kotlin.Tests.ps1" -Encoding utf8
 
     - name: Run Pester Tests
