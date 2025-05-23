@@ -227,10 +227,12 @@
     ],
     "dotnet": {
         "aptPackages": [
-            "dotnet-sdk-8.0"
+            "dotnet-sdk-8.0",
+            "dotnet-sdk-10.0"
         ],
         "versions": [
-            "8.0"
+            "8.0",
+            "10.0"
         ],
         "tools": [
             { "name": "nbgv", "test": "nbgv --version", "getversion" : "nbgv --version" }

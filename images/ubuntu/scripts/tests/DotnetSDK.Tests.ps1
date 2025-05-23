@@ -20,11 +20,11 @@ Describe "Dotnet and tools" {
             $dotnet = @{ dotnetVersion = $version }
 
             It "SDK <dotnetVersion> is available" -TestCases $dotnet {
-                $dotnetSDKs | Should -Match "$dotnetVersion.[1-9]*"
+                $dotnetSDKs | Should -Match "$($dotnet.dotnetVersion)\.\d+"
             }
 
             It "Runtime <dotnetVersion> is available" -TestCases $dotnet {
-                $dotnetRuntimes | Should -Match "$dotnetVersion.[1-9]*"
+                $dotnetRuntimes | Should -Match "$($dotnet.dotnetVersion)\.\d+"
             }
         }
     }
