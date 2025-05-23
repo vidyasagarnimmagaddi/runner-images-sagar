@@ -1,19 +1,19 @@
-name: Kotlin Tools Test
+name: Test Kotlin Tools
 
 on:
   push
 
 jobs:
-  test-kotlin:
+  kotlin-tools-check:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Download and Install Kotlin
+    - name: Download and Install Kotlin 2.1.20
       run: |
-        $version = "2.1.21"
+        $version = "2.1.20"
         $url = "https://github.com/JetBrains/kotlin/releases/download/v$version/kotlin-compiler-$version.zip"
         $zipPath = "$env:RUNNER_TEMP\kotlin.zip"
         $installPath = "C:\tools\kotlin"
@@ -26,14 +26,25 @@ jobs:
     - name: Install Pester
       run: Install-Module -Name Pester -Force -Scope CurrentUser
 
-    - name: Run Kotlin Tool Tests
+    - name: Create and Run Pester Tests
       run: |
-        $kotlinPackages = @("kapt", "kotlin", "kotlinc", "kotlinc-js", "kotlinc-jvm")
+        $testScript = @"
+Describe 'Kotlin' {
+    \$kotlinTools = @(
+        @{ Name = 'kotlin'; Command = 'kotlin -version' },
+        @{ Name = 'kotlinc'; Command = 'kotlinc -version' },
+        @{ Name = 'kotlinc-jvm'; Command = 'kotlinc-jvm -version' },
+        @{ Name = 'kotlinc-js'; Command = 'kotlinc-js -help' },
+        @{ Name = 'kapt'; Command = 'kapt -Kapt-mode=stubsAndApt -version' }
+    )
 
-        Describe "Kotlin" {
-            It "<toolName> is available" -TestCases ($kotlinPackages | ForEach-Object { @{ toolName = $_ } }) {
-                "$toolName -version" | Should -ReturnZeroExitCode
-            }
-        }
+    It '<Name> is available' -TestCases \$kotlinTools {
+        Invoke-Expression \$Command | Should -ReturnZeroExitCode
+    }
+}
+"@
+        $testPath = "$env:RUNNER_TEMP\Kotlin.Tests.ps1"
+        $testScript | Set-Content -Path $testPath -Encoding UTF8
 
-        Invoke-Pester -CI
+        Import-Module Pester
+        Invoke-Pester -Script $testPath -CI
