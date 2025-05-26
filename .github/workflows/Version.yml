@@ -1,0 +1,23 @@
+name: Check VC++ Redistributable Version
+
+on:
+  push
+
+jobs:
+  check-vcredist:
+    runs-on: windows-latest
+
+    steps:
+      - name: Download VC++ Redistributable Installer
+        run: |
+          $url = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+          $outputPath = "$env:TEMP\vc_redist.x64.exe"
+          Invoke-WebRequest -Uri $url -OutFile $outputPath
+          echo "Downloaded to: $outputPath"
+
+      - name: Check Installer Version
+        run: |
+          $installerPath = "$env:TEMP\vc_redist.x64.exe"
+          $versionInfo = (Get-Item $installerPath).VersionInfo
+          Write-Host "Product Version: $($versionInfo.ProductVersion)"
+          Write-Host "File Version: $($versionInfo.FileVersion)"
