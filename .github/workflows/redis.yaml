@@ -1,0 +1,27 @@
+name: Install VC Redist with Signature Check
+
+on:
+  push
+jobs:
+  install-vcredist:
+    runs-on: windows-2019
+
+    steps:
+      - name: Download VC Redist
+        run: |
+          $url = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+          $output = "vc_redist.x64.exe"
+          Invoke-WebRequest -Uri $url -OutFile $output
+
+      - name: Check Digital Signature
+        run: |
+          $signature = Get-AuthenticodeSignature -FilePath ".\vc_redist.x64.exe"
+          Write-Host "Signature Status: $($signature.Status)"
+          Write-Host "Signer: $($signature.SignerCertificate.Subject)"
+          if ($signature.Status -ne "Valid") {
+            throw "Invalid digital signature. Aborting installation."
+          }
+
+      - name: Install VC Redist Silently
+        run: |
+          Start-Process -FilePath ".\vc_redist.x64.exe" -ArgumentList "/install", "/quiet", "/norestart" -Wait -NoNewWindow
