@@ -63,7 +63,7 @@ if ((Get-ToolsetContent).postgresql.installVcRedist) {
     $vs17RedistUrl = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
     Install-Binary `
         -Url $vs17RedistUrl `
-        -InstallArgs @("/install", "/quiet", "/norestart") `
+        -InstallArgs @("/repair", "/quiet", "/norestart", "/log vc_redist.log") `
         -ExpectedSignature (Get-ToolsetContent).postgresql.vcRedistSignature
 }
 
