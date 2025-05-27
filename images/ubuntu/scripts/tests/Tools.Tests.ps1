@@ -371,7 +371,7 @@ Describe "yq" {
 
 Describe "Kotlin" {
     It "kapt" {
-        "kapt -version" | Should -ReturnZeroExitCode
+        "kapt -Kapt-mode=stubsAndApt -version" | Should -ReturnZeroExitCode
     }
 
     It "kotlin" {
@@ -387,7 +387,7 @@ Describe "Kotlin" {
     }
 
     It "kotlinc-js" {
-        "kotlinc-js -version" | Should -ReturnZeroExitCode
+        "kotlinc-js -help" | Should -ReturnZeroExitCode
     }
 }
 
