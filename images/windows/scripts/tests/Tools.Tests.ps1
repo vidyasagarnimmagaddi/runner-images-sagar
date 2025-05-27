@@ -204,7 +204,12 @@ Describe "Kotlin" {
     $kotlinPackages = @("kapt", "kotlin", "kotlinc", "kotlinc-js", "kotlinc-jvm")
 
     It "<toolName> is available" -TestCases ($kotlinPackages | ForEach-Object { @{ toolName = $_ } }) {
-        "$toolName -version" | Should -ReturnZeroExitCode
+        switch ($toolName) {
+            "kapt"        { $command = "kapt -Kapt-mode=stubsAndApt -version" }
+            "kotlinc-js"  { $command = "kotlinc-js -help" }
+            default       { $command = "$toolName -version" }
+        }
+        $command | Should -ReturnZeroExitCode
     }
 }
 
