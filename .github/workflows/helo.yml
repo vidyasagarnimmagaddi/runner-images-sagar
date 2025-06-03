@@ -1,0 +1,13 @@
+
+
+name: Hello on Ubuntu 24.04
+
+on:
+  push
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Print Hello
+        run: echo "Hello"
