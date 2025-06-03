@@ -3,12 +3,12 @@ on:
   push
 jobs:
   thumbprint:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Download Visual Studio Installer
-      run: Invoke-WebRequest -Uri https://aka.ms/vs/16/release/vs_Enterprise.exe -OutFile vs_Enterprise.exe
+      run: Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_Enterprise.exe -OutFile vs_Enterprise.exe
       shell: pwsh
     - name: Get Signature Thumbprint
       id: get_thumbprint
