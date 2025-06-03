@@ -1,0 +1,24 @@
+name: Get File Thumbprint
+on:
+  push
+jobs:
+  thumbprint:
+    runs-on: windows-2019
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Download Visual Studio Installer
+      run: Invoke-WebRequest -Uri https://aka.ms/vs/16/release/vs_Enterprise.exe -OutFile vs_Enterprise.exe
+      shell: pwsh
+    - name: Get Signature Thumbprint
+      id: get_thumbprint
+      run: |
+        $filePath = "vs_Enterprise.exe"
+        $sig = Get-AuthenticodeSignature -FilePath $filePath
+        $thumbprint = $sig.SignerCertificate.Thumbprint
+        Write-Output "Signature Thumbprint: $thumbprint"
+        echo "thumbprint=$thumbprint" >> $env:GITHUB_ENV
+      shell: pwsh
+    - name: Output Thumbprint
+      run: |
+        echo "Signature Thumbprint: $env:thumbprint"
