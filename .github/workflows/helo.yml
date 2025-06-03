@@ -1,6 +1,6 @@
 
 
-name: Hello on Ubuntu 24.04
+name: Hello on Ubuntu 22.04
 
 on:
   push
