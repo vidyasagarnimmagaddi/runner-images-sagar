@@ -1,0 +1,31 @@
+name: Check Essential CLI Tools
+
+on:
+  push
+jobs:
+  check-tools:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check if essential tools are installed
+        run: |
+          for tool in grep jq find git; do
+            if ! command -v $tool >/dev/null 2>&1; then
+              echo "::error::$tool is not installed"
+              exit 1
+            else
+              echo "$tool is installed: $(command -v $tool)"
+            fi
+          done
+          # git grep is a subcommand, check via 'git grep --version'
+          if git grep --version >/dev/null 2>&1; then
+            echo "git grep is available"
+          else
+            echo "::error::git grep is not available"
+            exit 1
+          fi
