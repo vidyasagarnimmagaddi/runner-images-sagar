@@ -5,7 +5,8 @@
 ################################################################################
 
 $condaDestination = "C:\Miniconda"
-$installerName = "Miniconda3-latest-Windows-x86_64.exe"
+$installerName = "Miniconda3-py313_25.3.1-1-Windows-x86_64.exe"
+
 
 #region Supply chain security
 $distributorFileHash = $null
