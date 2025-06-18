@@ -1,0 +1,27 @@
+name: Test GH CLI on GPU Runner
+
+on:
+   push
+
+jobs:
+  gpu-ghcli-test:
+    runs-on: ubuntu-22.04-gpu  # Use GitHub-hosted GPU runner
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y curl
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Check GH CLI Version
+        run: gh --version
+
+      - name: Check Auth Status
+        run: gh auth status || echo "gh is not authenticated"
