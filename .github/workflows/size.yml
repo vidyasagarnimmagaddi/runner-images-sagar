@@ -1,0 +1,13 @@
+name: Check Windows 2025 Drive Size
+
+on:
+  push
+
+jobs:
+  check-drive-size:
+    runs-on: windows-2025
+    steps:
+      - name: Check available drives and sizes
+        shell: pwsh
+        run: |
+          Get-Volume | Select-Object DriveLetter, FileSystemLabel, FileSystem, @{Name="Size(GB)";Expression={[math]::Round($_.Size / 1GB, 2)}}, @{Name="FreeSpace(GB)";Expression={[math]::Round($_.SizeRemaining / 1GB, 2)}} | Format-Table -AutoSize
