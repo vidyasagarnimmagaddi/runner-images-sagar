@@ -1,0 +1,40 @@
+name: Install Latest Pulumi
+
+on:
+  push
+
+jobs:
+  install-pulumi:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download latest Pulumi version number
+        id: get_version
+        run: |
+          version=$(curl -fsSL "https://www.pulumi.com/latest-version")
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Download Pulumi tarball
+        id: download_pulumi
+        run: |
+          version="${{ steps.get_version.outputs.version }}"
+          url="https://get.pulumi.com/releases/sdk/pulumi-v${version}-linux-x64.tar.gz"
+          curl -fsSL "$url" -o pulumi.tar.gz
+
+      - name: Download Pulumi SHA512SUMS
+        id: download_checksum
+        run: |
+          version="${{ steps.get_version.outputs.version }}"
+          curl -fsSL "https://github.com/pulumi/pulumi/releases/download/v${version}/SHA512SUMS" -o SHA512SUMS
+
+      - name: Verify Pulumi checksum
+        run: |
+          grep 'linux-x64.tar.gz' SHA512SUMS > pulumi.SHA512SUM
+          sha512sum -c pulumi.SHA512SUM
+
+      - name: Extract Pulumi
+        run: |
+          sudo tar --strip=1 -xzf pulumi.tar.gz -C /usr/local/bin
+
+      - name: Check Pulumi version
+        run: pulumi version
