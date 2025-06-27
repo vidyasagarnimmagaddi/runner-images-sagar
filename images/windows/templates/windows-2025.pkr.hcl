@@ -61,7 +61,7 @@ variable "imagedata_file" {
 
 variable "temp_dir" {
   type    = string
-  default = "D:\\temp"
+  default = "C:\\temp"
 }
 
 variable "install_password" {
