@@ -9,7 +9,18 @@ jobs:
     steps:
       - name: Show directory ownership
         run: |
-          echo "Permissions and owner for /usr/share:"
+          echo "Permissions and owner for /usr/share: bfre"
+          ls -ld /usr/share
+          echo "Permissions and owner for /opt:"
+          ls -ld /opt
+      - name: Make /usr/share read-only for everyone except root
+        run: sudo chmod 755 /usr/share
+
+      - name: Change owner back to root
+        run: sudo chown root:root /usr/share
+      - name: Show directory ownership
+        run: |
+          echo "Permissions and owner for /usr/share: after"
           ls -ld /usr/share
           echo "Permissions and owner for /opt:"
           ls -ld /opt
