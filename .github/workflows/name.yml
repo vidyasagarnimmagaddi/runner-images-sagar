@@ -1,0 +1,8 @@
+name: sample uname
+on: push
+jobs:
+ check_name:
+   runs-on: ubuntu-latest
+   steps:
+     - name: run uname-a
+       run: uname -a
