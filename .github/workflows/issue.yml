@@ -1,0 +1,46 @@
+name: Reproduce pwritev2 RWF_NOAPPEND issue
+
+on:
+  push
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Create initial file
+        run: |
+          echo "AAAA" > testfile.txt
+
+      - name: Display initial file content
+        run: cat testfile.txt
+
+      - name: Write C program
+        run: |
+          cat > pwritev2_test.c <<'EOF'
+          #define _GNU_SOURCE
+          #include <fcntl.h>
+          #include <stdio.h>
+          #include <string.h>
+          #include <unistd.h>
+          #include <sys/uio.h>
+          int main() {
+              int fd = open("testfile.txt", O_APPEND | O_WRONLY);
+              if (fd < 0) { perror("open"); return 1; }
+              struct iovec iov;
+              iov.iov_base = "XX";
+              iov.iov_len = 2;
+              ssize_t result = pwritev2(fd, &iov, 1, 0, RWF_NOAPPEND);
+              if (result < 0) { perror("pwritev2"); close(fd); return 1; }
+              close(fd);
+              return 0;
+          }
+          EOF
+
+      - name: Build test program
+        run: gcc -o pwritev2_test pwritev2_test.c
+
+      - name: Run test program (should attempt to overwrite start with 'XX')
+        run: ./pwritev2_test
+
+      - name: Show resulting file content
+        run: cat testfile.txt
