@@ -23,6 +23,9 @@ jobs:
           #include <string.h>
           #include <unistd.h>
           #include <sys/uio.h>
+          #ifndef RWF_NOAPPEND
+          #define RWF_NOAPPEND 0x00000200
+          #endif
           int main() {
               int fd = open("testfile.txt", O_APPEND | O_WRONLY);
               if (fd < 0) { perror("open"); return 1; }
