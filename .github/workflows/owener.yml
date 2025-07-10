@@ -1,4 +1,4 @@
-name: Check /usr/share Ownership
+name: Check /usr/share Ownerships
 
 on:
   push
