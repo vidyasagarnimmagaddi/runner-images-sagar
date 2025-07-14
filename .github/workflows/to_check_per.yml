@@ -1,0 +1,15 @@
+name: Check /usr/share Ownerships
+
+on:
+  push
+    
+jobs:
+  check-permissions:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Show directory ownership
+        run: |
+          echo "Permissions and owner for /usr/share: bfre"
+          ls -ld /usr/share
+          echo "Permissions and owner for /opt:"
+          ls -ld /opt
