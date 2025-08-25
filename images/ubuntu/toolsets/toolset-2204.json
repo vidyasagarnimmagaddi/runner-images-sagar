@@ -121,7 +121,9 @@
             "jq",
             "tar",
             "unzip",
-            "wget"
+            "wget",
+            "libxml2",
+            "libxml2-utils"
         ],
         "common_packages": [
             "autoconf",
