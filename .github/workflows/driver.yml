@@ -1,0 +1,33 @@
+name: Install OLEDB Driver
+
+on:
+ push
+
+jobs:
+  install-oledb:
+    runs-on: windows-latest
+
+    steps:
+      - name: Download OLE DB Driver (MSI)
+        run: |
+          $url = "https://go.microsoft.com/fwlink/?linkid=2242656"
+          $output = "$env:TEMP\msoledbsql.msi"
+          Write-Host "Downloading OLE DB driver from $url ..."
+          Invoke-WebRequest -Uri $url -OutFile $output
+          Write-Host "Downloaded to $output"
+
+      - name: Install OLE DB Driver silently
+        run: |
+          $msi = "$env:TEMP\msoledbsql.msi"
+          Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /qn IACCEPTMSOLEDBSQLLICENSETERMS=YES ADDLOCAL=ALL" -Wait -NoNewWindow
+          Write-Host "OLE DB Driver installation completed."
+
+      - name: Check installed version from registry
+        run: |
+          $key = "HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL"
+          if (Test-Path $key) {
+            $version = (Get-ItemProperty -Path $key).Version
+            Write-Host "Installed Microsoft OLE DB Driver version: $version"
+          } else {
+            Write-Error "OLE DB Driver registry key not found!"
+          }
