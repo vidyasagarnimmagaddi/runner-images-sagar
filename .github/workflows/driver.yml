@@ -1,33 +1,64 @@
-name: Install OLEDB Driver
+name: Install and Check OLEDB Driver
 
 on:
- push
+  push  # Manual trigger, you can add push/pull_request if needed
 
 jobs:
-  install-oledb:
+  oledb-driver:
     runs-on: windows-latest
 
     steps:
-      - name: Download OLE DB Driver (MSI)
+      - name: Download OLE DB Driver MSI
+        shell: pwsh
         run: |
           $url = "https://go.microsoft.com/fwlink/?linkid=2242656"
-          $output = "$env:TEMP\msoledbsql.msi"
+          $msi = "$env:TEMP\msoledbsql.msi"
           Write-Host "Downloading OLE DB driver from $url ..."
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Write-Host "Downloaded to $output"
+          Invoke-WebRequest -Uri $url -OutFile $msi
+          Write-Host "Downloaded to $msi"
 
       - name: Install OLE DB Driver silently
+        shell: pwsh
         run: |
           $msi = "$env:TEMP\msoledbsql.msi"
+          Write-Host "Installing OLE DB driver..."
           Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /qn IACCEPTMSOLEDBSQLLICENSETERMS=YES ADDLOCAL=ALL" -Wait -NoNewWindow
-          Write-Host "OLE DB Driver installation completed."
+          Write-Host "Installation completed."
 
-      - name: Check installed version from registry
+      - name: Check installed OLE DB Driver version
+        shell: pwsh
         run: |
-          $key = "HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL"
-          if (Test-Path $key) {
-            $version = (Get-ItemProperty -Path $key).Version
-            Write-Host "Installed Microsoft OLE DB Driver version: $version"
-          } else {
-            Write-Error "OLE DB Driver registry key not found!"
+          $keys = @(
+            "HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL",
+            "HKLM:\SOFTWARE\WOW6432Node\Microsoft\MSOLEDBSQL",
+            "HKLM:\SOFTWARE\ODBC\ODBCINST.INI\MSOLEDBSQL"
+          )
+
+          $found = $false
+          foreach ($key in $keys) {
+            if (Test-Path $key) {
+              $props = Get-ItemProperty -Path $key
+              $version = $props.Version
+              if (-not $version) { $version = $props.InstalledVersion }
+              if (-not $version -and $props.VersionMajor) { 
+                $version = "$($props.VersionMajor).$($props.VersionMinor)" 
+              }
+              if ($version) {
+                Write-Host "✅ Installed Microsoft OLE DB Driver version: $version (from $key)"
+                $found = $true
+
+                # Uncomment below to fail if not 19.x
+                # if ($version -notmatch '^19\.') {
+                #   Write-Error "❌ Expected 19.x driver but found $version"
+                #   exit 1
+                # }
+
+                break
+              }
+            }
+          }
+
+          if (-not $found) {
+            Write-Error "❌ Could not detect OLE DB Driver version in registry!"
+            exit 1
           }
