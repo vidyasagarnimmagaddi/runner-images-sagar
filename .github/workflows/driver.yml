@@ -11,7 +11,7 @@ jobs:
       - name: Download OLE DB Driver MSI
         shell: pwsh
         run: |
-          $url = "https://go.microsoft.com/fwlink/?linkid=2242656"
+          $url = "https://go.microsoft.com/fwlink/?linkid=2318001"
           $msi = "$env:TEMP\msoledbsql.msi"
           Write-Host "Downloading OLE DB driver from $url ..."
           Invoke-WebRequest -Uri $url -OutFile $msi
