@@ -1,0 +1,10 @@
+name: sample
+on: push
+jobs: 
+   frst_job: 
+     runs-on: ubuntu-latest
+     steps:
+       - name: print hi
+         run: echo "hello"
+       - name: print bye
+         run: echo "bye"
