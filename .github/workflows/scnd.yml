@@ -1,4 +1,4 @@
-name: secnd
+tname: secnd
 on: push
 jobs:
   build:
@@ -11,6 +11,6 @@ jobs:
       with: 
         node-version: 20
     - name: install dependencis
-      run: npm ci
+      run: npm install
     - name: run test
       run: npm test
