@@ -1,0 +1,16 @@
+name: secnd
+on: push
+jobs:
+  build:
+   runs-on: ubuntu-latest
+   steps:
+    - name: get code
+      uses: actions/checkout@v4
+    - name: get node
+      uses: actions/setup-node@v4
+      with: 
+        node-version: 20
+    - name: install dependencis
+      run: npm ci
+    - name: run test
+      run: npm test
