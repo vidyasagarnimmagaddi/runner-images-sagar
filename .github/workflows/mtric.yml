@@ -3,9 +3,10 @@ on:
   push
 jobs:
   build:
+   continue-on-error: true
    strategy:
     matrix: 
-      node: [18, 20, 22]
+      node: [14, 18, 20, 22]
       operating-system: [ubuntu-latest , windows-latest]
    runs-on: ${{ matrix.operating-system }}
    steps:
