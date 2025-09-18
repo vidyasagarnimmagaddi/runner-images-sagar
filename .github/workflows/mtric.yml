@@ -1,0 +1,19 @@
+name: check_matrix
+on: 
+  push
+jobs:
+  build:
+   strategy:
+    matrix: 
+      node: [18, 20, 22]
+      operating-system: [ubuntu-latest , windows-latest]
+   runs-on: ${{ matrix.operating-system }}
+   steps:
+    - name: get code
+      uses: actions/checkout@v4
+    - name: get node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node }}
+    - name: check version
+      run: node --version
